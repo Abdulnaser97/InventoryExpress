@@ -4,6 +4,7 @@ import { Item, ItemBatch, Warehouse } from "./schema";
 import { insertItemBatch, onItemClick } from "./utils";
 import { Button, TextField } from "@mui/material";
 import { useState } from "react";
+import NewItemBatchForm from "./components/BatchForm";
 
 function syntaxHighlight(json) {
   if (typeof json != "string") {
@@ -76,11 +77,14 @@ function App() {
   //   insertItemBatch(eraserBatch);
 
   const [itemName, setItemName] = useState("");
-  const [warehouseId, setWarehouseId] = useState("");
+  const [warehouseID, setwarehouseID] = useState("");
   const [quantity, setQuantity] = useState("");
   const [warehousesById, setWarehouseById] = useState(warehousez);
   const [itemById, setItemById] = useState(itemz);
   const [itemBatchById, setItemBatchById] = useState(itemBatchez);
+
+  const [newBatchForm, setNewBatchForm] = useState(true);
+  const [curBatchForm, setcurBatchForm] = useState(true);
 
   const handleNameChange = (event) => {
     setItemName(event.target.value);
@@ -89,8 +93,8 @@ function App() {
   const handleQuantityChange = (event) => {
     setQuantity(parseInt(event.target.value));
   };
-  const handleWarehouseIdChange = (event) => {
-    setWarehouseId(parseInt(event.target.value));
+  const handlewarehouseIDChange = (event) => {
+    setwarehouseID(parseInt(event.target.value));
   };
 
   useEffect(() => {
@@ -102,6 +106,8 @@ function App() {
 
   return (
     <div className="App">
+      {newBatchForm && <NewItemBatchForm setNewBatchForm={setNewBatchForm} />}
+
       <div>
         <form>
           <TextField
@@ -125,10 +131,10 @@ function App() {
           <TextField
             style={{ width: "200px", margin: "5px" }}
             type="text"
-            label="warehouseId"
+            label="warehouseID"
             variant="outlined"
-            onChange={handleWarehouseIdChange}
-            value={warehouseId}
+            onChange={handlewarehouseIDChange}
+            value={warehouseID}
           />
           <br />
 
@@ -139,7 +145,7 @@ function App() {
               insertItemBatch(
                 itemName,
                 quantity,
-                warehouseId,
+                warehouseID,
                 warehousesById,
                 itemById,
                 itemBatchById,

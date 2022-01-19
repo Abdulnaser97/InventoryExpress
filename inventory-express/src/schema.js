@@ -13,7 +13,7 @@ export class Warehouse {
 
 export class Item {
   constructor(name, quantity, imageURL) {
-    this.warehouseIds = new Set();
+    this.warehouseIDs = new Set();
     this.id = uuidv4();
     this.name = name;
     this.quantity = quantity;
@@ -23,12 +23,12 @@ export class Item {
 }
 
 export class ItemBatch {
-  constructor(name, itemId, quantity, warehouseId) {
+  constructor(name, itemId, quantity, warehouseID) {
     this.name = name;
     this.itemId = itemId;
     this.batchId = uuidv4();
     this.quantity = quantity;
-    this.warehouseId = warehouseId;
+    this.warehouseID = warehouseID;
     this.dateAdded = new Date();
   }
 }

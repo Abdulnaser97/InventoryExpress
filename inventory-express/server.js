@@ -22,7 +22,7 @@ class Warehouse {
 
 class Item {
   constructor(name, quantity, imageURL) {
-    this.warehouseIds = new Set();
+    this.warehouseIDs = new Set();
     this.id = uuidv4();
     this.name = name;
     this.quantity = quantity;
@@ -32,12 +32,12 @@ class Item {
 }
 
 class ItemBatch {
-  constructor(name, itemId, quantity, warehouseId) {
+  constructor(name, itemId, quantity, warehouseID) {
     this.name = name;
     this.itemId = itemId;
     this.batchId = uuidv4();
     this.quantity = quantity;
-    this.warehouseId = warehouseId;
+    this.warehouseID = warehouseID;
     this.dateAdded = new Date();
   }
 }
@@ -57,8 +57,8 @@ class ItemBatch {
 // Optimizing for time complexity at the expense fo space complexity because #space_is_cheap
 export function onItemClick(item) {
   const warehouses = [];
-  for (let warehouseId of item.warehouseIds) {
-    const warehouse = warehousesById[warehouseId];
+  for (let warehouseID of item.warehouseIDs) {
+    const warehouse = warehousesById[warehouseID];
     warehouses.push({
       name: warehouse.name,
       location: warehouse.location,
@@ -72,18 +72,18 @@ export function onItemClick(item) {
 export function insertItemBatch(itemBatchObj) {
   // Update warehouse inventory
   try {
-    const warehouse = warehousesById[itemBatchObj.warehouseId];
+    const warehouse = warehousesById[itemBatchObj.warehouseID];
     if (!warehouse) {
       throw new Error("Warehouse not found");
     }
 
     if (
-      itemBatchObj.itemId in warehousesById[itemBatchObj.warehouseId].inventory
+      itemBatchObj.itemId in warehousesById[itemBatchObj.warehouseID].inventory
     ) {
-      warehousesById[itemBatchObj.warehouseId].inventory[itemBatchObj.itemId] +=
+      warehousesById[itemBatchObj.warehouseID].inventory[itemBatchObj.itemId] +=
         itemBatchObj.quantity;
     } else {
-      warehousesById[itemBatchObj.warehouseId].inventory[itemBatchObj.itemId] =
+      warehousesById[itemBatchObj.warehouseID].inventory[itemBatchObj.itemId] =
         itemBatchObj.quantity;
     }
 
@@ -93,7 +93,7 @@ export function insertItemBatch(itemBatchObj) {
     } else {
       const item = new Item(itemBatchObj.name, itemBatchObj.quantity);
       item.quantity += itemBatchObj.quantity;
-      item.warehouseIds.add(itemBatchObj.warehouseId);
+      item.warehouseIDs.add(itemBatchObj.warehouseID);
       itemById[itemBatchObj.itemId] = item;
     }
 
