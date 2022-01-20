@@ -4,8 +4,12 @@ import { insertItemBatch, onItemClick } from "./utils";
 import { Button, TextField } from "@mui/material";
 import { useState } from "react";
 import NewItemBatchForm from "./components/BatchForm";
-import { addItemBatch } from "./apiCaller";
-import { Alert, Snackbar } from "@mui/material";
+import {
+  addItemBatch,
+  addWarehouse,
+  updateWarehouseItemQuantiy,
+} from "./apiCaller";
+import Dashboard from "./Dashboard";
 
 function syntaxHighlight(json) {
   if (typeof json != "string") {
@@ -36,17 +40,21 @@ function syntaxHighlight(json) {
 }
 
 function App() {
+  //   insertItemBatch(notebookBatch);
+
+  //   onItemClick(pencil);
+
+  //   insertItemBatch(eraserBatch);
+
   const [itemName, setItemName] = useState("");
   const [warehouseID, setwarehouseID] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [warehouseByID, setWarehouseByID] = useState(null);
-  const [itemByID, setItemByID] = useState(null);
-  const [itemBatchByID, setItemBatchByID] = useState(null);
+  const [warehousesById, setWarehouseById] = useState(null);
+  const [itemById, setItemById] = useState(null);
+  const [itemBatchById, setItemBatchById] = useState(null);
 
   const [newBatchForm, setNewBatchForm] = useState(true);
   const [curBatchForm, setcurBatchForm] = useState(true);
-
-  const [notificaton, setNotification] = useState(null);
 
   const handleNameChange = (event) => {
     setItemName(event.target.value);
@@ -60,43 +68,20 @@ function App() {
   };
 
   useEffect(() => {
-    document.getElementById(1).innerHTML = syntaxHighlight(warehouseByID);
-    document.getElementById(2).innerHTML = syntaxHighlight(itemByID);
-    document.getElementById(3).innerHTML = syntaxHighlight(itemBatchByID);
-    console.log(itemByID);
-  }, [warehouseByID, itemByID, itemBatchByID]);
+    document.getElementById(1).innerHTML = syntaxHighlight(warehousesById);
+    document.getElementById(2).innerHTML = syntaxHighlight(itemById);
+    document.getElementById(3).innerHTML = syntaxHighlight(itemBatchById);
+    console.log(itemById);
+
+    // console.log(as)
+  }, [warehousesById, itemById, itemBatchById]);
 
   return (
     <div className="App">
-      {notificaton && (
-        <Snackbar
-          style={{
-            position: "fixed",
-            "max-height": "fit-content",
-            "min-width": "15vw",
-            top: "5vh",
-            left: "30vw",
-          }}
-          open={notificaton.message}
-          autoHideDuration={4000}
-          onClose={() => setNotification(null)}
-        >
-          <Alert
-            severity={notificaton.type}
-            onClose={() => setNotification(null)}
-          >
-            {notificaton.message}
-          </Alert>
-        </Snackbar>
-      )}
+      {/* {newBatchForm && <NewItemBatchForm setNewBatchForm={setNewBatchForm} />} */}
 
-      {newBatchForm && (
-        <NewItemBatchForm
-          setNewBatchForm={setNewBatchForm}
-          setNotification={setNotification}
-        />
-      )}
-
+      <Dashboard />
+      {/* 
       <div>
         <form>
           <TextField
@@ -130,13 +115,24 @@ function App() {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => () =>
-              addItemBatch(warehouseID, itemName, null, quantity)}
+            onClick={() =>
+              insertItemBatch(
+                itemName,
+                quantity,
+                warehouseID,
+                warehousesById,
+                itemById,
+                itemBatchById,
+                setWarehouseById,
+                setItemById,
+                setItemBatchById
+              )
+            }
           >
             Register item batch
           </Button>
         </form>
-      </div>
+      </div> */}
 
       <div>
         <pre id="1" />

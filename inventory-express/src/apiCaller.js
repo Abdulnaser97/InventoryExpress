@@ -107,8 +107,7 @@ export async function getItem(itemID, setNotification) {
   const data = {
     itemID: itemID,
   };
-
-  const res = await perform("get", "/getitem", data);
+  const res = await perform("get", `/getitem?id=${itemID}`, data);
   if (res.status !== 200 && res.status !== 201) {
     setNotification({ type: "error", message: "Error retrieving item data" });
   } else {
@@ -135,5 +134,39 @@ export async function getItemBatch(itemBatchID, setNotification) {
       type: "success",
       message: "Successfully retrieved item batch data",
     });
+  }
+}
+
+export async function getWarehouses(setNotification, setWarehouses) {
+  const res = await perform("get", "/getwarehouses");
+  const warehouses = await res.json();
+  if (res.status !== 200 && res.status !== 201) {
+    setNotification({
+      type: "error",
+      message: "Error getting warehouses",
+    });
+  } else {
+    setNotification({
+      type: "success",
+      message: "Successfully retrieved warehouses!",
+    });
+    setWarehouses(warehouses);
+  }
+}
+
+export async function getItems(setNotification, setItems) {
+  const res = await perform("get", "/getitems");
+  const items = await res.json();
+  if (res.status !== 200 && res.status !== 201) {
+    setNotification({
+      type: "error",
+      message: "Error getting items",
+    });
+  } else {
+    setNotification({
+      type: "success",
+      message: "Successfully retrieved items!",
+    });
+    setItems(items);
   }
 }

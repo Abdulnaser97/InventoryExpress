@@ -1,24 +1,22 @@
 const { Item, ItemBatch, Warehouse } = require("./schema");
 
 // Warehouses
-const farthestWareHouse = new Warehouse(7, "farthestWareHouse", "123 Main St", {
+const farthestWareHouse = new Warehouse("123 Main St", {
   longitute: 43.65516733516912,
   latitude: -79.43054855252032,
 });
-const secondClosestWareHouse = new Warehouse(
-  8,
-  "secondClosestWareHouse",
-  "12543 Fort St",
-  { longitute: 43.65104366699908, latitude: -79.3906793523954 }
-);
-const closestWareHouse = new Warehouse(9, "closestWareHouse", "1 Baby St", {
+const secondClosestWareHouse = new Warehouse("12543 Fort St", {
+  longitute: 43.65104366699908,
+  latitude: -79.3906793523954,
+});
+const closestWareHouse = new Warehouse("1 Baby St", {
   longitute: 43.63729881158868,
   latitude: -79.39599249915359,
 });
 
-const itemByID = {}; //{itemID: Item, ...}
-const itemBatchByID = {}; //{id: ItemBatch, ...}
-const warehouseByID = {
+var itemByID = {}; //{itemID: Item, ...}
+var itemBatchByID = {}; //{id: ItemBatch, ...}
+var warehouseByID = {
   7: farthestWareHouse,
   8: secondClosestWareHouse,
   9: closestWareHouse,
@@ -63,6 +61,7 @@ function insertItemBatch() {
       }
 
       warehouseByID[itemBatchObj.warehouseID] = warehouse;
+      console.log(item.id);
 
       res.status(200).send("ItemBatch added successfully");
     } catch (error) {
@@ -131,8 +130,7 @@ function updateItemQuantityInAWarehouse() {
 function getItem() {
   return async (req, res) => {
     try {
-      var { itemID } = req.body;
-
+      var itemID = req.query.id;
       const item = itemByID[itemID];
       if (!item) {
         throw new Error("Item not found");
@@ -147,9 +145,49 @@ function getItem() {
     }
   };
 }
+
+function getItems() {
+  return async (req, res) => {
+    try {
+      let items = {};
+      // get entries from warehouseByID
+      Object.entries(itemByID).forEach(([key, item]) => {
+        items[item.name] = key;
+      });
+      res.json(items);
+    } catch (error) {
+      console.log(`getItems: ${error}`);
+      // return response message, warehouse not found
+      res.status(400).json({
+        message: error.message,
+      });
+    }
+  };
+}
+
+function getWarehouses() {
+  return async (req, res) => {
+    try {
+      let warehouses = {};
+      Object.entries(warehouseByID).forEach(([key, wh]) => {
+        warehouses[wh.id] = wh.address;
+      });
+      res.json(warehouses);
+    } catch (error) {
+      console.log(`getItems: ${error}`);
+      // return response message, warehouse not found
+      res.status(400).json({
+        message: error.message,
+      });
+    }
+  };
+}
+
 module.exports = {
   insertItemBatch,
   getItem,
+  getItems,
+  getWarehouses,
   addWarehouse,
   updateItemQuantityInAWarehouse,
 };
