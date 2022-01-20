@@ -9,6 +9,7 @@ import {
   getItemBatch,
   getWarehouses,
   getItems,
+  login,
 } from "./apiCaller";
 
 export default function Dashboard() {
@@ -22,7 +23,7 @@ export default function Dashboard() {
   const [quantity, setQuantity] = useState("");
   const [notificaton, setNotification] = useState(null);
   const [address, setAddress] = useState("");
-
+  const [loggedIn, setLoggedIn] = useState(false);
   const handleNameChange = (event) => {
     setItemName(event.target.value);
   };
@@ -42,6 +43,24 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+    if (!loggedIn) {
+      const token = sessionStorage.getItem("access_token");
+      if (token) {
+        setLoggedIn(true);
+      } else {
+        login(setNotification).then((newToken) => {
+          if (newToken) {
+            sessionStorage.setItem("access_token", newToken);
+            setLoggedIn(true);
+          } else {
+            setNotification({ type: "error", message: "Error logging in" });
+          }
+        });
+      }
+    }
+  }, [loggedIn]);
+
+  useEffect(() => {
     if (selectedItem && selectedItem.id) {
       setRetrievedItem(getItem(selectedItem.id, setNotification));
     }
@@ -56,8 +75,10 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    getItems(setNotification, setItems);
-  }, []);
+    if (loggedIn) {
+      getItems(setNotification, setItems);
+    }
+  }, [loggedIn]);
 
   return (
     <div className="dashboard-container">

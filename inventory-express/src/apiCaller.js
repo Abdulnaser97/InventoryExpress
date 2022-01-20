@@ -11,6 +11,7 @@ export async function perform(method, resource, data) {
           Accept: "application/json",
           "Content-Type": "application/json",
           "Access-Control-Allow-Credentials": true,
+          Authorization: sessionStorage.getItem("access_token"),
         },
         body: JSON.stringify(data),
       };
@@ -42,6 +43,15 @@ export async function addItemBatch(
   newQuantity,
   setNotification
 ) {
+  const token = sessionStorage.getItem("access_token");
+  if (!token) {
+    setNotification({
+      type: "error",
+      message: "no access token, please refresh",
+    });
+    return;
+  }
+
   const data = {
     warehouseID: warehouseID,
     itemName: itemName,
@@ -62,6 +72,15 @@ export async function addItemBatch(
 }
 
 export async function addWarehouse(address, setNotification) {
+  const token = sessionStorage.getItem("access_token");
+  if (!token) {
+    setNotification({
+      type: "error",
+      message: "no access token, please refresh",
+    });
+    return;
+  }
+
   const data = {
     address: address,
   };
@@ -91,7 +110,14 @@ export async function updateItemQuantityInAWarehouse(
     itemID: itemID,
     newQuantity: newQuantity,
   };
-
+  const token = sessionStorage.getItem("access_token");
+  if (!token) {
+    setNotification({
+      type: "error",
+      message: "no access token, please refresh",
+    });
+    return;
+  }
   const res = await perform("post", "/updatewarehouse", data);
   if (res.status !== 200 && res.status !== 201) {
     setNotification({ type: "error", message: "Error updating warehouse" });
@@ -104,6 +130,14 @@ export async function updateItemQuantityInAWarehouse(
 }
 
 export async function getItem(itemID, setNotification) {
+  const token = sessionStorage.getItem("access_token");
+  if (!token) {
+    setNotification({
+      type: "error",
+      message: "no access token, please refresh",
+    });
+    return;
+  }
   const data = {
     itemID: itemID,
   };
@@ -119,6 +153,14 @@ export async function getItem(itemID, setNotification) {
 }
 
 export async function getItemBatch(itemBatchID, setNotification) {
+  const token = sessionStorage.getItem("access_token");
+  if (!token) {
+    setNotification({
+      type: "error",
+      message: "no access token, please refresh",
+    });
+    return;
+  }
   const data = {
     itemBatchID: itemBatchID,
   };
@@ -138,6 +180,14 @@ export async function getItemBatch(itemBatchID, setNotification) {
 }
 
 export async function getWarehouses(setNotification, setWarehouses) {
+  const token = sessionStorage.getItem("access_token");
+  if (!token) {
+    setNotification({
+      type: "error",
+      message: "no access token, please refresh",
+    });
+    return;
+  }
   const res = await perform("get", "/getwarehouses");
   const warehouses = await res.json();
   if (res.status !== 200 && res.status !== 201) {
@@ -155,6 +205,14 @@ export async function getWarehouses(setNotification, setWarehouses) {
 }
 
 export async function getItems(setNotification, setItems) {
+  const token = sessionStorage.getItem("access_token");
+  if (!token) {
+    setNotification({
+      type: "error",
+      message: "no access token, please refresh",
+    });
+    return;
+  }
   const res = await perform("get", "/getitems");
   const items = await res.json();
   if (res.status !== 200 && res.status !== 201) {
@@ -168,5 +226,22 @@ export async function getItems(setNotification, setItems) {
       message: "Successfully retrieved items!",
     });
     setItems(items);
+  }
+}
+
+export async function login(setNotification) {
+  const res = await perform("get", "/login");
+  const { token } = await await res.json();
+  if ((res.status !== 200 && res.status !== 201) || !token) {
+    setNotification({
+      type: "error",
+      message: "Error retrieving session key",
+    });
+  } else {
+    setNotification({
+      type: "success",
+      message: "Successfully retrieved session key!",
+    });
+    return token;
   }
 }

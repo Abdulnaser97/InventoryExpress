@@ -7,6 +7,7 @@ import NewItemBatchForm from "./components/BatchForm";
 import {
   addItemBatch,
   addWarehouse,
+  login,
   updateWarehouseItemQuantiy,
 } from "./apiCaller";
 import Dashboard from "./Dashboard";
@@ -40,106 +41,9 @@ function syntaxHighlight(json) {
 }
 
 function App() {
-  //   insertItemBatch(notebookBatch);
-
-  //   onItemClick(pencil);
-
-  //   insertItemBatch(eraserBatch);
-
-  const [itemName, setItemName] = useState("");
-  const [warehouseID, setwarehouseID] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [warehousesById, setWarehouseById] = useState(null);
-  const [itemById, setItemById] = useState(null);
-  const [itemBatchById, setItemBatchById] = useState(null);
-
-  const [newBatchForm, setNewBatchForm] = useState(true);
-  const [curBatchForm, setcurBatchForm] = useState(true);
-
-  const handleNameChange = (event) => {
-    setItemName(event.target.value);
-  };
-
-  const handleQuantityChange = (event) => {
-    setQuantity(parseInt(event.target.value));
-  };
-  const handlewarehouseIDChange = (event) => {
-    setwarehouseID(parseInt(event.target.value));
-  };
-
-  useEffect(() => {
-    document.getElementById(1).innerHTML = syntaxHighlight(warehousesById);
-    document.getElementById(2).innerHTML = syntaxHighlight(itemById);
-    document.getElementById(3).innerHTML = syntaxHighlight(itemBatchById);
-    console.log(itemById);
-
-    // console.log(as)
-  }, [warehousesById, itemById, itemBatchById]);
-
   return (
     <div className="App">
-      {/* {newBatchForm && <NewItemBatchForm setNewBatchForm={setNewBatchForm} />} */}
-
       <Dashboard />
-      {/* 
-      <div>
-        <form>
-          <TextField
-            style={{ width: "200px", margin: "5px" }}
-            type="text"
-            label="name"
-            variant="outlined"
-            onChange={handleNameChange}
-            value={itemName}
-          />
-          <br />
-          <TextField
-            style={{ width: "200px", margin: "5px" }}
-            type="text"
-            label="quantity"
-            variant="outlined"
-            onChange={handleQuantityChange}
-            value={quantity}
-          />
-          <br />
-          <TextField
-            style={{ width: "200px", margin: "5px" }}
-            type="text"
-            label="warehouseID"
-            variant="outlined"
-            onChange={handlewarehouseIDChange}
-            value={warehouseID}
-          />
-          <br />
-
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() =>
-              insertItemBatch(
-                itemName,
-                quantity,
-                warehouseID,
-                warehousesById,
-                itemById,
-                itemBatchById,
-                setWarehouseById,
-                setItemById,
-                setItemBatchById
-              )
-            }
-          >
-            Register item batch
-          </Button>
-        </form>
-      </div> */}
-
-      <div>
-        <pre id="1" />
-        <pre id="2" />
-
-        <pre id="3" />
-      </div>
     </div>
   );
 }
