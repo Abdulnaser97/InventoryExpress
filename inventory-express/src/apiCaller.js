@@ -1,4 +1,4 @@
-const BASE_URI = "http://localhost:8080/";
+const BASE_URI = "http://localhost:8080";
 export async function perform(method, resource, data) {
   try {
     let reqParams;
@@ -29,37 +29,62 @@ export async function perform(method, resource, data) {
 
     let res = await fetch(`${BASE_URI}${resource}`, reqParams);
 
-    if (res.status !== 200) {
-      throw new Error(`Error calling resource ${BASE_URI}${resource}`);
-    }
-    res = await res.json();
     return res;
   } catch (e) {
     console.log(e);
   }
 }
 
-export async function addWarehouse(address, location) {
-  const data = {
-    location: location,
-    address: address,
-  };
-  return await perform("post", "/addwarehouse", data);
-}
-
-export async function addItemBatch(warehouseID, itemName, newQuantity) {
+export async function addItemBatch(
+  warehouseID,
+  itemName,
+  itemID,
+  newQuantity,
+  setNotification
+) {
   const data = {
     warehouseID: warehouseID,
     itemName: itemName,
     newQuantity: newQuantity,
+    itemID: itemID,
   };
-  return await perform("post", "/additembatch", data);
+
+  console.log(data);
+  const res = await perform("post", "/additembatch", data);
+  if (res.status !== 200 && res.status !== 201) {
+    setNotification({ type: "error", message: "Error adding item Batch" });
+  } else {
+    setNotification({
+      type: "success",
+      message: "Item Batch added successfully",
+    });
+  }
 }
 
-export async function updateWarehouseItemQuantiy(
+export async function addWarehouse(address, setNotification) {
+  const data = {
+    address: address,
+  };
+
+  const res = await perform("set", "/addwarehouse", data);
+  if (res.status !== 200 && res.status !== 201) {
+    setNotification({
+      type: "error",
+      message: `Error adding warehouse ${address}`,
+    });
+  } else {
+    setNotification({
+      type: "success",
+      message: `Successfully added warehouse ${address}`,
+    });
+  }
+}
+
+export async function updateItemQuantityInAWarehouse(
   warehouseID,
   itemID,
-  newQuantity
+  newQuantity,
+  setNotification
 ) {
   const data = {
     warehouseID: warehouseID,
@@ -67,5 +92,48 @@ export async function updateWarehouseItemQuantiy(
     newQuantity: newQuantity,
   };
 
-  return await perform("post", "/updatewarehouse", data);
+  const res = await perform("post", "/updatewarehouse", data);
+  if (res.status !== 200 && res.status !== 201) {
+    setNotification({ type: "error", message: "Error updating warehouse" });
+  } else {
+    setNotification({
+      type: "success",
+      message: "warehouse quantity updated successfully",
+    });
+  }
+}
+
+export async function getItem(itemID, setNotification) {
+  const data = {
+    itemID: itemID,
+  };
+
+  const res = await perform("get", "/getitem", data);
+  if (res.status !== 200 && res.status !== 201) {
+    setNotification({ type: "error", message: "Error retrieving item data" });
+  } else {
+    setNotification({
+      type: "success",
+      message: "Successfully retrieved item data",
+    });
+  }
+}
+
+export async function getItemBatch(itemBatchID, setNotification) {
+  const data = {
+    itemBatchID: itemBatchID,
+  };
+
+  const res = await perform("get", "/getitembatch", data);
+  if (res.status !== 200 && res.status !== 201) {
+    setNotification({
+      type: "error",
+      message: "Error retrieving item batch data",
+    });
+  } else {
+    setNotification({
+      type: "success",
+      message: "Successfully retrieved item batch data",
+    });
+  }
 }

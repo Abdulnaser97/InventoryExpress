@@ -16,7 +16,7 @@ const styles = {
 const FormWrapper = styled.div`
   position: absolute;
   top: 10vh;
-  right: 10vw;
+  left: 20vw;
   height: 18vw;
   width: 20vw;
   background-color: #7ca5cf;
@@ -115,7 +115,7 @@ export default function NewItemBatchForm(props) {
   const [itemName, setItemName] = useState("");
   const [warehouseID, setwarehouseID] = useState("");
   const [quantity, setQuantity] = useState("");
-  const { classes } = props;
+  const { setNotification } = props;
 
   const handleNameChange = (event) => {
     setItemName(event.target.value);
@@ -174,7 +174,9 @@ export default function NewItemBatchForm(props) {
             boxShadow: "none",
             borderRadius: "0.5vw",
           }}
-          onClick={() => addItemBatch(warehouseID, quantity, itemName)}
+          onClick={() =>
+            addItemBatch(warehouseID, itemName, null, quantity, setNotification)
+          }
         >
           Register item batch
         </Button>

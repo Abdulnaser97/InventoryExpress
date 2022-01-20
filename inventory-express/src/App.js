@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import "./App.css";
-import { Item, ItemBatch, Warehouse } from "./schema";
 import { insertItemBatch, onItemClick } from "./utils";
 import { Button, TextField } from "@mui/material";
 import { useState } from "react";
 import NewItemBatchForm from "./components/BatchForm";
+import { addItemBatch } from "./apiCaller";
+import { Alert, Snackbar } from "@mui/material";
 
 function syntaxHighlight(json) {
   if (typeof json != "string") {
@@ -34,57 +35,18 @@ function syntaxHighlight(json) {
   );
 }
 
-// Items
-const pencil = new Item(1, "pencil", 200);
-const eraser = new Item(2, "eraser", 200);
-const notebook = new Item(3, "notebook", 200);
-
-// batches
-const pencilBatch = new ItemBatch("pencil", null, 50, 7);
-const eraserBatch = new ItemBatch("eraser", null, 50, 7);
-const notebookBatch = new ItemBatch("notebook", null, 50, 7);
-
-// Warehouses
-const farthestWareHouse = new Warehouse(7, "farthestWareHouse", "123 Main St", {
-  longitute: 43.65516733516912,
-  latitude: -79.43054855252032,
-});
-const secondClosestWareHouse = new Warehouse(
-  8,
-  "secondClosestWareHouse",
-  "12543 Fort St",
-  { longitute: 43.65104366699908, latitude: -79.3906793523954 }
-);
-const closestWareHouse = new Warehouse(9, "closestWareHouse", "1 Baby St", {
-  longitute: 43.63729881158868,
-  latitude: -79.39599249915359,
-});
-
-const itemz = {}; //{itemId: Item, ...}
-const itemBatchez = {}; //{id: ItemBatchx, ...}
-
-const warehousez = {
-  7: farthestWareHouse,
-  8: secondClosestWareHouse,
-  9: closestWareHouse,
-}; //{id: Warehouse1} // Need to be ptr to warehouse object};
-
 function App() {
-  //   insertItemBatch(notebookBatch);
-
-  //   onItemClick(pencil);
-
-  //   insertItemBatch(eraserBatch);
-
   const [itemName, setItemName] = useState("");
   const [warehouseID, setwarehouseID] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [warehousesById, setWarehouseById] = useState(warehousez);
-  const [itemById, setItemById] = useState(itemz);
-  const [itemBatchById, setItemBatchById] = useState(itemBatchez);
+  const [warehouseByID, setWarehouseByID] = useState(null);
+  const [itemByID, setItemByID] = useState(null);
+  const [itemBatchByID, setItemBatchByID] = useState(null);
 
   const [newBatchForm, setNewBatchForm] = useState(true);
   const [curBatchForm, setcurBatchForm] = useState(true);
+
+  const [notificaton, setNotification] = useState(null);
 
   const handleNameChange = (event) => {
     setItemName(event.target.value);
@@ -98,15 +60,42 @@ function App() {
   };
 
   useEffect(() => {
-    document.getElementById(1).innerHTML = syntaxHighlight(warehousesById);
-    document.getElementById(2).innerHTML = syntaxHighlight(itemById);
-    document.getElementById(3).innerHTML = syntaxHighlight(itemBatchById);
-    console.log(itemById);
-  }, [warehousesById, itemById, itemBatchById]);
+    document.getElementById(1).innerHTML = syntaxHighlight(warehouseByID);
+    document.getElementById(2).innerHTML = syntaxHighlight(itemByID);
+    document.getElementById(3).innerHTML = syntaxHighlight(itemBatchByID);
+    console.log(itemByID);
+  }, [warehouseByID, itemByID, itemBatchByID]);
 
   return (
     <div className="App">
-      {newBatchForm && <NewItemBatchForm setNewBatchForm={setNewBatchForm} />}
+      {notificaton && (
+        <Snackbar
+          style={{
+            position: "fixed",
+            "max-height": "fit-content",
+            "min-width": "15vw",
+            top: "5vh",
+            left: "30vw",
+          }}
+          open={notificaton.message}
+          autoHideDuration={4000}
+          onClose={() => setNotification(null)}
+        >
+          <Alert
+            severity={notificaton.type}
+            onClose={() => setNotification(null)}
+          >
+            {notificaton.message}
+          </Alert>
+        </Snackbar>
+      )}
+
+      {newBatchForm && (
+        <NewItemBatchForm
+          setNewBatchForm={setNewBatchForm}
+          setNotification={setNotification}
+        />
+      )}
 
       <div>
         <form>
@@ -141,19 +130,8 @@ function App() {
           <Button
             variant="contained"
             color="primary"
-            onClick={() =>
-              insertItemBatch(
-                itemName,
-                quantity,
-                warehouseID,
-                warehousesById,
-                itemById,
-                itemBatchById,
-                setWarehouseById,
-                setItemById,
-                setItemBatchById
-              )
-            }
+            onClick={() => () =>
+              addItemBatch(warehouseID, itemName, null, quantity)}
           >
             Register item batch
           </Button>

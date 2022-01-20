@@ -8,7 +8,7 @@ class Warehouse {
     this.name = name;
     this.location = location;
     this.address = address;
-    this.inventory = {}; // {itemId: quantity}
+    this.inventory = {}; // {itemID: quantity}
     this.distance = null; // needs to be removed
   }
 }
@@ -17,7 +17,7 @@ class Warehouse {
 //    a. immediately retrieve all the names of items in warehouse.inventory and put them in a trie with the node value being id of item
 // 2. User starts typing down item name, if no match found, create a new Item class object and add it to warehouse.inventory
 //    b. if item found, then
-// if none found, we create a new item object and added it to itemById table
+// if none found, we create a new item object and added it to itemByID table
 // if found
 
 class Item {
@@ -32,9 +32,9 @@ class Item {
 }
 
 class ItemBatch {
-  constructor(name, itemId, quantity, warehouseID) {
+  constructor(name, itemID, quantity, warehouseID) {
     this.name = name;
-    this.itemId = itemId;
+    this.itemID = itemID;
     this.batchId = uuidv4();
     this.quantity = quantity;
     this.warehouseID = warehouseID;
@@ -44,7 +44,7 @@ class ItemBatch {
 
 // function retrieveWarehouseInfo(warehouse) {
 //   try {
-//     const wareHouseInfo = wareHouseById[warehouse.id];
+//     const wareHouseInfo = wareHouseByID[warehouse.id];
 //   } catch (e) {
 //     console.log("Error retrieving warehouse info");
 //   }
@@ -58,7 +58,7 @@ class ItemBatch {
 export function onItemClick(item) {
   const warehouses = [];
   for (let warehouseID of item.warehouseIDs) {
-    const warehouse = warehousesById[warehouseID];
+    const warehouse = warehouseByID[warehouseID];
     warehouses.push({
       name: warehouse.name,
       location: warehouse.location,
@@ -72,33 +72,33 @@ export function onItemClick(item) {
 export function insertItemBatch(itemBatchObj) {
   // Update warehouse inventory
   try {
-    const warehouse = warehousesById[itemBatchObj.warehouseID];
+    const warehouse = warehouseByID[itemBatchObj.warehouseID];
     if (!warehouse) {
       throw new Error("Warehouse not found");
     }
 
     if (
-      itemBatchObj.itemId in warehousesById[itemBatchObj.warehouseID].inventory
+      itemBatchObj.itemID in warehouseByID[itemBatchObj.warehouseID].inventory
     ) {
-      warehousesById[itemBatchObj.warehouseID].inventory[itemBatchObj.itemId] +=
+      warehouseByID[itemBatchObj.warehouseID].inventory[itemBatchObj.itemID] +=
         itemBatchObj.quantity;
     } else {
-      warehousesById[itemBatchObj.warehouseID].inventory[itemBatchObj.itemId] =
+      warehouseByID[itemBatchObj.warehouseID].inventory[itemBatchObj.itemID] =
         itemBatchObj.quantity;
     }
 
     // Update global item quantity
-    if (itemBatchObj.itemId in itemById) {
-      itemById[itemBatchObj.itemId].quantity += itemBatchObj.quantity;
+    if (itemBatchObj.itemID in itemByID) {
+      itemByID[itemBatchObj.itemID].quantity += itemBatchObj.quantity;
     } else {
       const item = new Item(itemBatchObj.name, itemBatchObj.quantity);
       item.quantity += itemBatchObj.quantity;
       item.warehouseIDs.add(itemBatchObj.warehouseID);
-      itemById[itemBatchObj.itemId] = item;
+      itemByID[itemBatchObj.itemID] = item;
     }
 
-    // Update itemBatchById
-    itemBatchById[itemBatchObj.batchId] = itemBatchObj;
+    // Update itemBatchByID
+    itemBatchByID[itemBatchObj.batchId] = itemBatchObj;
   } catch (e) {
     console.log("Error inserting item batch");
   }
@@ -122,10 +122,10 @@ const closestWareHouse = new Warehouse(9, "closestWareHouse", "1 Baby St", {
   latitude: -79.39599249915359,
 });
 
-const itemById = {}; //{itemId: Item, ...}
-const itemBatchById = {}; //{id: ItemBatchx, ...}
+const itemByID = {}; //{itemID: Item, ...}
+const itemBatchByID = {}; //{id: ItemBatchx, ...}
 
-const warehousesById = {
+const warehouseByID = {
   7: farthestWareHouse,
   8: secondClosestWareHouse,
   9: closestWareHouse,
