@@ -10,6 +10,7 @@ const {
   updateItemQuantityInAWarehouse,
   getItems,
   getWarehouses,
+  login,
 } = require("./inventoryControllers");
 
 const app = express();
@@ -60,6 +61,8 @@ app.use(
     credentials: true,
   })
 );
+
+app.get("/login", login());
 
 app.post("/addWarehouse", addWarehouse());
 

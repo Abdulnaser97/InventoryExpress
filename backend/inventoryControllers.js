@@ -1,4 +1,7 @@
 const { Item, ItemBatch, Warehouse } = require("./schema");
+const { v4: uuidv4 } = require("uuid");
+
+sessions = {};
 
 // Warehouses
 const farthestWareHouse = new Warehouse("123 Main St", {
@@ -14,8 +17,6 @@ const closestWareHouse = new Warehouse("1 Baby St", {
   latitude: -79.39599249915359,
 });
 
-var itemByID = {}; //{itemID: Item, ...}
-var itemBatchByID = {}; //{id: ItemBatch, ...}
 var warehouseByID = {
   7: farthestWareHouse,
   8: secondClosestWareHouse,
@@ -25,10 +26,18 @@ var warehouseByID = {
 function insertItemBatch() {
   return async (req, res) => {
     try {
+      let { authorization } = req.headers;
+      if (!authorization) {
+        res.status(400).json({
+          message: error.message,
+        });
+        throw new Error("Authorization header not found");
+      }
+
       var { warehouseID, itemName, itemID, newQuantity } = req.body;
 
       // Update global item quantity
-      let item = itemByID[itemID];
+      let item = sessions[authorization].itemByID[itemID];
       if (!item) {
         // If no item exists in database, create a new one
         item = new Item(itemName, newQuantity);
@@ -37,7 +46,7 @@ function insertItemBatch() {
         item.quantity += newQuantity;
         item.warehouseIDs.add(warehouseID);
       }
-      itemByID[item.id] = item;
+      sessions[authorization].itemByID[item.id] = item;
 
       // Update itemBatchByID
       const itemBatchObj = new ItemBatch(
@@ -46,10 +55,12 @@ function insertItemBatch() {
         newQuantity,
         warehouseID
       );
-      itemBatchByID[itemBatchObj.batchId] = itemBatchObj;
+      sessions[authorization].itemBatchByID[itemBatchObj.batchId] =
+        itemBatchObj;
 
       // Update warehouse inventory
-      const warehouse = warehouseByID[itemBatchObj.warehouseID];
+      const warehouse =
+        sessions[authorization].warehouseByID[itemBatchObj.warehouseID];
       if (!warehouse) {
         throw new Error("Warehouse not found");
       }
@@ -60,8 +71,8 @@ function insertItemBatch() {
         warehouse.inventory[itemBatchObj.itemID] = itemBatchObj.quantity;
       }
 
-      warehouseByID[itemBatchObj.warehouseID] = warehouse;
-      console.log(item.id);
+      sessions[authorization].warehouseByID[itemBatchObj.warehouseID] =
+        warehouse;
 
       res.status(200).send("ItemBatch added successfully");
     } catch (error) {
@@ -77,17 +88,26 @@ function insertItemBatch() {
 function addWarehouse() {
   return async (req, res) => {
     try {
+      let { authorization } = req.headers;
+      if (!authorization) {
+        res.status(400).json({
+          message: error.message,
+        });
+        throw new Error("Authorization header not found");
+      }
       var { address } = req.body;
 
-      Object.keys(warehouseByID).forEach(function (key) {
-        if (warehouseByID[key].address === addresss) {
+      Object.keys(sessions[authorization].warehouseByID).forEach(function (
+        key
+      ) {
+        if (sessions[authorization].warehouseByID[key].address === address) {
           throw new Error("Warehouse already exists");
         }
       });
 
       const warehouse = new Warehouse(address);
 
-      warehouseByID[warehouse.id] = warehouse;
+      sessions[authorization].warehouseByID[warehouse.id] = warehouse;
 
       res.status(200).send("warehouse added successfully");
     } catch (error) {
@@ -103,9 +123,16 @@ function addWarehouse() {
 function updateItemQuantityInAWarehouse() {
   return async (req, res) => {
     try {
+      let { authorization } = req.headers;
+      if (!authorization) {
+        res.status(400).json({
+          message: error.message,
+        });
+        throw new Error("Authorization header not found");
+      }
       var { warehouseID, itemID, newQuantity } = req.body;
 
-      const warehouse = warehouseByID[warehouseID];
+      const warehouse = sessions[authorization].warehouseByID[warehouseID];
       if (!warehouse) {
         throw new Error("Warehouse not found");
       }
@@ -114,7 +141,7 @@ function updateItemQuantityInAWarehouse() {
         throw new Error(`ItemID not found in ${warehouse.address}`);
       }
       warehouse.inventory[itemID] = newQuantity;
-      warehouseByID[warehouseID] = warehouse;
+      sessions[authorization].warehouseByID[warehouseID] = warehouse;
 
       res.status(200).send("item quantity updated successfully");
     } catch (error) {
@@ -130,8 +157,15 @@ function updateItemQuantityInAWarehouse() {
 function getItem() {
   return async (req, res) => {
     try {
+      let { authorization } = req.headers;
+      if (!authorization) {
+        res.status(400).json({
+          message: error.message,
+        });
+        throw new Error("Authorization header not found");
+      }
       var itemID = req.query.id;
-      const item = itemByID[itemID];
+      const item = sessions[authorization].itemByID[itemID];
       if (!item) {
         throw new Error("Item not found");
       }
@@ -149,11 +183,20 @@ function getItem() {
 function getItems() {
   return async (req, res) => {
     try {
+      let { authorization } = req.headers;
+      if (!authorization) {
+        res.status(400).json({
+          message: error.message,
+        });
+        throw new Error("Authorization header not found");
+      }
       let items = {};
       // get entries from warehouseByID
-      Object.entries(itemByID).forEach(([key, item]) => {
-        items[item.name] = key;
-      });
+      Object.entries(sessions[authorization].itemByID).forEach(
+        ([key, item]) => {
+          items[item.name] = key;
+        }
+      );
       res.json(items);
     } catch (error) {
       console.log(`getItems: ${error}`);
@@ -168,13 +211,42 @@ function getItems() {
 function getWarehouses() {
   return async (req, res) => {
     try {
+      let { authorization } = req.headers;
+      if (!authorization) {
+        res.status(400).json({
+          message: error.message,
+        });
+        throw new Error("Authorization header not found");
+      }
       let warehouses = {};
-      Object.entries(warehouseByID).forEach(([key, wh]) => {
-        warehouses[wh.id] = wh.address;
-      });
+      Object.entries(sessions[authorization].warehouseByID).forEach(
+        ([key, wh]) => {
+          warehouses[wh.id] = wh.address;
+        }
+      );
       res.json(warehouses);
     } catch (error) {
       console.log(`getItems: ${error}`);
+      // return response message, warehouse not found
+      res.status(400).json({
+        message: error.message,
+      });
+    }
+  };
+}
+
+function login() {
+  return async (req, res) => {
+    try {
+      const token = uuidv4();
+      sessions[token] = {
+        itemByID: {},
+        itemBatchByID: {},
+        warehouseByID: warehouseByID,
+      };
+      res.json({ token: token });
+    } catch (error) {
+      console.log(`login: ${error}`);
       // return response message, warehouse not found
       res.status(400).json({
         message: error.message,
@@ -190,4 +262,5 @@ module.exports = {
   getWarehouses,
   addWarehouse,
   updateItemQuantityInAWarehouse,
+  login,
 };
