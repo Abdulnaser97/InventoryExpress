@@ -78,7 +78,13 @@ export default function AddItemBatch(props) {
             props.itemName,
             null,
             quantity,
-            props.setNotification
+            props.setNotification,
+            props.items,
+            props.setItems,
+            props.warehouses,
+            props.setWarehouses,
+            props.itemBatches,
+            props.setItemBatches
           )
         }
       >

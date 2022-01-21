@@ -28,7 +28,7 @@ class ItemBatch {
     this.batchId = uuidv4();
     this.quantity = quantity;
     this.warehouseID = warehouseID;
-    this.dateAdded = new Date();
+    this.dateAdded = new Date().toDateString();
   }
 }
 

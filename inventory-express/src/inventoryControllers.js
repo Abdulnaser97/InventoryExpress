@@ -38,35 +38,42 @@ export function insertItemBatch(
   warehouseID,
   itemName,
   itemID,
-  newQuantity,
+  quantity,
+  setNotification,
+  items,
+  setItems,
   warehouses,
-  setNotification
+  setWarehouses,
+  itemBatches,
+  setItemBatches
 ) {
   try {
     // Update global item quantity
-    let item = itemByID[itemID];
-    if (!item) {
+    let item;
+    if (!items || !items[itemID]) {
       // If no item exists in database, create a new one
-      item = new Item(itemName, newQuantity);
+      item = new Item(itemName, quantity);
       item.warehouseIDs.add(warehouseID);
     } else {
-      item.quantity += newQuantity;
+      item = items[itemID];
+      item.quantity += quantity;
       item.warehouseIDs.add(warehouseID);
     }
-    itemByID[item.id] = item;
+    setItems({ ...items, [item.id]: item });
 
     // Update itemBatchByID
     const itemBatchObj = new ItemBatch(
       itemName,
       item.id,
-      newQuantity,
+      quantity,
       warehouseID
     );
-    itemBatchByID[itemBatchObj.batchId] = itemBatchObj;
+    setItemBatches({ ...itemBatches, [itemBatchObj.batchId]: itemBatchObj });
 
     // Update warehouse inventory
     const warehouse = warehouses[itemBatchObj.warehouseID];
     if (!warehouse) {
+      setNotification({ type: "error", message: "Warehouse not found" });
       throw new Error("Warehouse not found");
     }
 
@@ -76,7 +83,8 @@ export function insertItemBatch(
       warehouse.inventory[itemBatchObj.itemID] = itemBatchObj.quantity;
     }
 
-    warehouses[itemBatchObj.warehouseID] = warehouse;
+    setWarehouses({ ...warehouses, [itemBatchObj.warehouseID]: warehouse });
+
     setNotification({
       type: "success",
       message: "Item Batch added successfully",
@@ -89,6 +97,11 @@ export function insertItemBatch(
 
 export function addWarehouse(address, setWarehouses, setNotification) {
   try {
+    if (!address) {
+      setNotification({ type: "error", message: "Address is required" });
+      throw new Error("Address is required");
+    }
+
     let warehouses = JSON.parse(sessionStorage.getItem("warehouses"));
     if (!warehouses) {
       warehouses = {};
