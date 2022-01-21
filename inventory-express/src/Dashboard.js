@@ -1,41 +1,64 @@
-import { Typography, TextField, Button, Snackbar, Alert } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import ItemComponent from "./ItemComponent";
 import {
-  addItemBatch,
-  addWarehouse,
-  updateItemQuantityInAWarehouse,
-  getItem,
-  getItemBatch,
-  getWarehouses,
-  getItems,
-  login,
-} from "./apiCaller";
+  Typography,
+  TextField,
+  Button,
+  Snackbar,
+  Alert,
+  ListItem,
+  IconButton,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { insertItemBatch, addWarehouse } from "./inventoryControllers";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { styled } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import List from "@mui/material/List";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Avatar from "@mui/material/Avatar";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import Grid from "@mui/material/Grid";
+import FolderIcon from "@mui/icons-material/Folder";
+import AddItemBatch from "./components/AddItemBatch";
 
 export default function Dashboard() {
   const [items, setItems] = useState(null);
-
   const [itemName, setItemName] = useState("");
+  const [itemComponents, setItemComponents] = useState(null);
   const [selectedItem, setSelectedItem] = useState("");
   const [retrievedItem, setRetrievedItem] = useState(null);
   const [warehouses, setWarehouses] = useState(null);
-  const [warehouseID, setwarehouseID] = useState("");
-  const [quantity, setQuantity] = useState("");
   const [notificaton, setNotification] = useState(null);
   const [address, setAddress] = useState("");
-  const [loggedIn, setLoggedIn] = useState(false);
+
+  const handleAddressChange = (event) => {
+    setAddress(event.target.value);
+  };
   const handleNameChange = (event) => {
     setItemName(event.target.value);
   };
-
-  const handleQuantityChange = (event) => {
-    setQuantity(parseInt(event.target.value));
-  };
-  const handlewarehouseIDChange = (event) => {
-    setwarehouseID(parseInt(event.target.value));
-  };
-  const handleAddressChange = (event) => {
-    setAddress(event.target.value);
+  const handleDelete = (warehouseId) => {
+    if (warehouseId in warehouses) {
+      const warehouse = warehouses[warehouseId];
+      Object.entries(warehouse.inventory).forEach(([itemId, quantity]) => {
+        const item = items[itemId];
+        if (item) {
+          item.quantity -= quantity;
+          if (warehouseId in item.warehouseIDs) {
+            item.warehouseIDs.delete(warehouseId);
+          }
+          setItems({ ...items, [itemId]: item });
+        }
+      });
+      setWarehouses((prevState) => {
+        const state = { ...prevState };
+        delete state[warehouseId];
+        return state;
+      });
+    }
   };
 
   const searchItem = async () => {
@@ -43,42 +66,40 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    if (!loggedIn) {
-      const token = sessionStorage.getItem("access_token");
-      if (token) {
-        setLoggedIn(true);
-      } else {
-        login(setNotification).then((newToken) => {
-          if (newToken) {
-            sessionStorage.setItem("access_token", newToken);
-            setLoggedIn(true);
-          } else {
-            setNotification({ type: "error", message: "Error logging in" });
-          }
-        });
-      }
-    }
-  }, [loggedIn]);
+    sessionStorage.setItem("warehouses", JSON.stringify(warehouses));
+  }, [warehouses]);
 
   useEffect(() => {
-    if (selectedItem && selectedItem.id) {
-      setRetrievedItem(getItem(selectedItem.id, setNotification));
+    const sessionWarehouses = sessionStorage.getItem("warehouses");
+    if (JSON.parse(sessionWarehouses)) {
+      setWarehouses(JSON.parse(sessionWarehouses));
     }
-  }, [selectedItem]);
-
-  useEffect(() => {
-    // async function add() {
-    //   const as = await addItemBatch(7, 'as', null,  9, setNotification)
-    //   console.log(as)
-    // }
-    // add()
+    console.log(warehouses);
   }, []);
 
   useEffect(() => {
-    if (loggedIn) {
-      getItems(setNotification, setItems);
+    if (items) {
+      let itemList = Object.entries(items).map(([item]) => {
+        return (
+          <ListItem
+            secondaryAction={
+              <IconButton
+                edge="end"
+                aria-label="delete"
+                onClick={() => handleDelete(item[0])}
+              >
+                <DeleteIcon />
+              </IconButton>
+            }
+            key={item[0]}
+          >
+            <ListItemText primary={item[1].name} />
+          </ListItem>
+        );
+      });
+      setItemComponents(itemList);
     }
-  }, [loggedIn]);
+  }, [items, warehouses]);
 
   return (
     <div className="dashboard-container">
@@ -130,7 +151,7 @@ export default function Dashboard() {
         <div className="item-viewer">
           <div className="item-viewer-container">
             {selectedItem ? (
-              <ItemComponent
+              <ListItem
                 warehouses={[]}
                 itemId={1}
                 name={"pencil"}
@@ -138,9 +159,7 @@ export default function Dashboard() {
                 quantity={12}
               />
             ) : (
-              <Typography variant={"h4"}>
-                Select an item to view information
-              </Typography>
+              <List>{items && itemComponents}</List>
             )}
           </div>
           <div className="item-viewer-container">
@@ -164,53 +183,12 @@ export default function Dashboard() {
         </div>
 
         <div className="control-view">
-          <div className="item-control">
-            <Typography variant="h6" my={2}>
-              Add Item Batch
-            </Typography>
-            <TextField
-              style={{ margin: "5px" }}
-              type="text"
-              label="name"
-              variant="outlined"
-              onChange={handleNameChange}
-              value={itemName}
-            />
-
-            <TextField
-              style={{ margin: "5px" }}
-              type="text"
-              label="quantity"
-              variant="outlined"
-              onChange={handleQuantityChange}
-              value={quantity}
-            />
-
-            <TextField
-              style={{ margin: "5px" }}
-              type="text"
-              label="warehouseID"
-              variant="outlined"
-              onChange={handlewarehouseIDChange}
-              value={warehouseID}
-            />
-
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() =>
-                addItemBatch(
-                  warehouseID,
-                  itemName,
-                  null,
-                  quantity,
-                  setNotification
-                )
-              }
-            >
-              + Batch
-            </Button>
-          </div>
+          <AddItemBatch
+            setNotification={setNotification}
+            setItemName={setItemName}
+            itemName={itemName}
+            warehouses={warehouses}
+          />
 
           <div className="warehouse-view">
             <div className="warehouse-control">
@@ -218,7 +196,7 @@ export default function Dashboard() {
               <TextField
                 style={{ margin: "10px" }}
                 type="text"
-                label="warehouseID"
+                label="warehouse Address"
                 variant="outlined"
                 onChange={handleAddressChange}
                 value={address}
@@ -226,12 +204,36 @@ export default function Dashboard() {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => addWarehouse(address, setNotification)}
+                onClick={() =>
+                  addWarehouse(address, setWarehouses, setNotification)
+                }
               >
                 + Warehouse
               </Button>
             </div>
-            <div className="warehouse-list"></div>
+            <div className="warehouse-list">
+              <List>
+                {warehouses &&
+                  Object.entries(warehouses).map((wh) => {
+                    return (
+                      <ListItem
+                        secondaryAction={
+                          <IconButton
+                            edge="end"
+                            aria-label="delete"
+                            onClick={() => handleDelete(wh[0])}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        }
+                        key={wh[0]}
+                      >
+                        <ListItemText primary={wh[1].address} />
+                      </ListItem>
+                    );
+                  })}
+              </List>
+            </div>
           </div>
         </div>
       </div>
