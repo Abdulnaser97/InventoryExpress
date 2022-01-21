@@ -1,84 +1,66 @@
 import { Typography, TextField, Button, Snackbar, Alert } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import ItemComponent from "./ItemComponent";
-import {
-  addItemBatch,
-  addWarehouse,
-  updateItemQuantityInAWarehouse,
-  getItem,
-  getItemBatch,
-  getWarehouses,
-  getItems,
-  login,
-} from "./apiCaller";
+import AddItemBatch from "./components/AddItemBatch";
+import Warehouses from "./components/Warehouses";
+import Items from "./components/Items";
+import ItemBatches from "./components/ItemBatches";
 
 export default function Dashboard() {
-  const [items, setItems] = useState(null);
-
-  const [itemName, setItemName] = useState("");
-  const [selectedItem, setSelectedItem] = useState("");
-  const [retrievedItem, setRetrievedItem] = useState(null);
-  const [warehouses, setWarehouses] = useState(null);
-  const [warehouseID, setwarehouseID] = useState("");
-  const [quantity, setQuantity] = useState("");
+  const [warehouses, setWarehouses] = useState(undefined);
+  const [items, setItems] = useState(undefined);
+  const [itemBatches, setItemBatches] = useState(undefined);
+  const [itemName, setItemName] = useState(undefined);
+  const [selectedItem, setSelectedItem] = useState(undefined);
+  const [retrievedItem, setRetrievedItem] = useState(undefined);
   const [notificaton, setNotification] = useState(null);
-  const [address, setAddress] = useState("");
-  const [loggedIn, setLoggedIn] = useState(false);
+
   const handleNameChange = (event) => {
     setItemName(event.target.value);
-  };
-
-  const handleQuantityChange = (event) => {
-    setQuantity(parseInt(event.target.value));
-  };
-  const handlewarehouseIDChange = (event) => {
-    setwarehouseID(parseInt(event.target.value));
-  };
-  const handleAddressChange = (event) => {
-    setAddress(event.target.value);
   };
 
   const searchItem = async () => {
     setSelectedItem({ id: "sth", name: "item name" });
   };
 
+  // Update warehouses in sessionStorage
   useEffect(() => {
-    if (!loggedIn) {
-      const token = sessionStorage.getItem("access_token");
-      if (token) {
-        setLoggedIn(true);
-      } else {
-        login(setNotification).then((newToken) => {
-          if (newToken) {
-            sessionStorage.setItem("access_token", newToken);
-            setLoggedIn(true);
-          } else {
-            setNotification({ type: "error", message: "Error logging in" });
-          }
-        });
-      }
+    if (warehouses !== undefined) {
+      sessionStorage.setItem("warehouses", JSON.stringify(warehouses));
     }
-  }, [loggedIn]);
+  }, [warehouses]);
 
+  // Update items in sessionStorage
   useEffect(() => {
-    if (selectedItem && selectedItem.id) {
-      setRetrievedItem(getItem(selectedItem.id, setNotification));
+    if (items !== undefined) {
+      sessionStorage.setItem("items", JSON.stringify(items));
     }
-  }, [selectedItem]);
+  }, [items]);
 
+  // Update item batches in sessionStorage
   useEffect(() => {
-    // async function add() {
-    //   const as = await addItemBatch(7, 'as', null,  9, setNotification)
-    //   console.log(as)
-    // }
-    // add()
+    if (itemBatches !== undefined) {
+      sessionStorage.setItem("itemBatches", JSON.stringify(itemBatches));
+    }
+  }, [itemBatches]);
+
+  // Reload states from sessionStorage
+  useEffect(() => {
+    const sessionWarehouses = sessionStorage.getItem("warehouses");
+    if (JSON.parse(sessionWarehouses)) {
+      setWarehouses(JSON.parse(sessionWarehouses));
+    }
+
+    const sessionItems = sessionStorage.getItem("items");
+    if (JSON.parse(sessionItems)) {
+      setItems(JSON.parse(sessionItems));
+    }
+
+    const sessionItemBatches = sessionStorage.getItem("itemBatches");
+    if (JSON.parse(sessionItemBatches)) {
+      setItemBatches(JSON.parse(sessionItemBatches));
+    }
+    console.log(warehouses);
   }, []);
-
-  useEffect(() => {
-    if (loggedIn) {
-      getItems(setNotification, setItems);
-    }
-  }, [loggedIn]);
 
   return (
     <div className="dashboard-container">
@@ -128,111 +110,61 @@ export default function Dashboard() {
       </div>
       <div className="content-view">
         <div className="item-viewer">
-          <div className="item-viewer-container">
-            {selectedItem ? (
-              <ItemComponent
-                warehouses={[]}
-                itemId={1}
-                name={"pencil"}
-                batches={[]}
-                quantity={12}
-              />
-            ) : (
-              <Typography variant={"h4"}>
-                Select an item to view information
-              </Typography>
-            )}
-          </div>
+          <Items
+            selectedItem={selectedItem}
+            warehouses={warehouses}
+            setWarehouses={setWarehouses}
+            setNotification={setNotification}
+            items={items}
+            setItems={setItems}
+            itemBatches={itemBatches}
+            setItemBatches={setItemBatches}
+          />
           <div className="item-viewer-container">
             <div className="warehouse-list">
               <Typography variant="h6" m={2}>
                 Item batches
               </Typography>
-              {/* {selectedItem.batches.map((batch) => {
-                <p> {batch} </p>
-              })} */}
+
+              <ItemBatches
+                selectedItem={selectedItem}
+                warehouses={warehouses}
+                setWarehouses={setWarehouses}
+                setNotification={setNotification}
+                items={items}
+                setItems={setItems}
+                itemBatches={itemBatches}
+                setItemBatches={setItemBatches}
+              />
             </div>
             <div className="warehouse-list">
               <Typography variant="h6" m={2}>
                 Waehouses with item in stock
               </Typography>
-              {/* {selectedItem.warehouses.map((warehouse) => {
-                <p> {warehouse} </p>
-              }) */}
             </div>
           </div>
         </div>
 
         <div className="control-view">
-          <div className="item-control">
-            <Typography variant="h6" my={2}>
-              Add Item Batch
-            </Typography>
-            <TextField
-              style={{ margin: "5px" }}
-              type="text"
-              label="name"
-              variant="outlined"
-              onChange={handleNameChange}
-              value={itemName}
-            />
+          <AddItemBatch
+            setNotification={setNotification}
+            itemName={itemName}
+            setItemName={setItemName}
+            warehouses={warehouses}
+            setWarehouses={setWarehouses}
+            items={items}
+            setItems={setItems}
+            itemBatches={itemBatches}
+            setItemBatches={setItemBatches}
+          />
 
-            <TextField
-              style={{ margin: "5px" }}
-              type="text"
-              label="quantity"
-              variant="outlined"
-              onChange={handleQuantityChange}
-              value={quantity}
-            />
-
-            <TextField
-              style={{ margin: "5px" }}
-              type="text"
-              label="warehouseID"
-              variant="outlined"
-              onChange={handlewarehouseIDChange}
-              value={warehouseID}
-            />
-
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() =>
-                addItemBatch(
-                  warehouseID,
-                  itemName,
-                  null,
-                  quantity,
-                  setNotification
-                )
-              }
-            >
-              + Batch
-            </Button>
-          </div>
-
-          <div className="warehouse-view">
-            <div className="warehouse-control">
-              <Typography variant="h6">Warehouses</Typography>
-              <TextField
-                style={{ margin: "10px" }}
-                type="text"
-                label="warehouseID"
-                variant="outlined"
-                onChange={handleAddressChange}
-                value={address}
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => addWarehouse(address, setNotification)}
-              >
-                + Warehouse
-              </Button>
-            </div>
-            <div className="warehouse-list"></div>
-          </div>
+          <Warehouses
+            warehouses={warehouses}
+            setWarehouses={setWarehouses}
+            setNotification={setNotification}
+            items={items}
+            setItems={setItems}
+          />
         </div>
       </div>
     </div>

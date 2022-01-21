@@ -1,247 +1,146 @@
-const BASE_URI = "http://localhost:8080";
-export async function perform(method, resource, data) {
-  try {
-    let reqParams;
-    if (method === "post" || method === "put") {
-      reqParams = {
-        method: method,
-        credentials: "include",
-        mode: "cors",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Credentials": true,
-          Authorization: sessionStorage.getItem("access_token"),
-        },
-        body: JSON.stringify(data),
-      };
-    } else {
-      reqParams = {
-        method: method,
-        credentials: "include",
-        mode: "cors",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Credentials": true,
-        },
-      };
-    }
+// export async function updateItemQuantityInAWarehouse(
+//   warehouseID,
+//   itemID,
+//   newQuantity,
+//   setNotification
+// ) {
+//   const data = {
+//     warehouseID: warehouseID,
+//     itemID: itemID,
+//     newQuantity: newQuantity,
+//   };
+//   const token = sessionStorage.getItem("access_token");
+//   if (!token) {
+//     setNotification({
+//       type: "error",
+//       message: "no access token, please refresh",
+//     });
+//     return;
+//   }
+//   const res = await perform("post", "/updatewarehouse", data);
+//   if (res.status !== 200 && res.status !== 201) {
+//     setNotification({ type: "error", message: "Error updating warehouse" });
+//   } else {
+//     setNotification({
+//       type: "success",
+//       message: "warehouse quantity updated successfully",
+//     });
+//   }
+// }
 
-    let res = await fetch(`${BASE_URI}${resource}`, reqParams);
+// export async function getItem(itemID, setNotification) {
+//   const token = sessionStorage.getItem("access_token");
+//   if (!token) {
+//     setNotification({
+//       type: "error",
+//       message: "no access token, please refresh",
+//     });
+//     return;
+//   }
+//   const data = {
+//     itemID: itemID,
+//   };
+//   const res = await perform("get", `/getitem?id=${itemID}`, data);
+//   if (res.status !== 200 && res.status !== 201) {
+//     setNotification({ type: "error", message: "Error retrieving item data" });
+//   } else {
+//     setNotification({
+//       type: "success",
+//       message: "Successfully retrieved item data",
+//     });
+//   }
+// }
 
-    return res;
-  } catch (e) {
-    console.log(e);
-  }
-}
+// export async function getItemBatch(itemBatchID, setNotification) {
+//   const token = sessionStorage.getItem("access_token");
+//   if (!token) {
+//     setNotification({
+//       type: "error",
+//       message: "no access token, please refresh",
+//     });
+//     return;
+//   }
+//   const data = {
+//     itemBatchID: itemBatchID,
+//   };
 
-export async function addItemBatch(
-  warehouseID,
-  itemName,
-  itemID,
-  newQuantity,
-  setNotification
-) {
-  const token = sessionStorage.getItem("access_token");
-  if (!token) {
-    setNotification({
-      type: "error",
-      message: "no access token, please refresh",
-    });
-    return;
-  }
+//   const res = await perform("get", "/getitembatch", data);
+//   if (res.status !== 200 && res.status !== 201) {
+//     setNotification({
+//       type: "error",
+//       message: "Error retrieving item batch data",
+//     });
+//   } else {
+//     setNotification({
+//       type: "success",
+//       message: "Successfully retrieved item batch data",
+//     });
+//   }
+// }
 
-  const data = {
-    warehouseID: warehouseID,
-    itemName: itemName,
-    newQuantity: newQuantity,
-    itemID: itemID,
-  };
+// export async function getWarehouses(setNotification, setWarehouses) {
+//   const token = sessionStorage.getItem("access_token");
+//   if (!token) {
+//     setNotification({
+//       type: "error",
+//       message: "no access token, please refresh",
+//     });
+//     return;
+//   }
+//   const res = await perform("get", "/getwarehouses");
+//   const warehouses = await res.json();
+//   if (res.status !== 200 && res.status !== 201) {
+//     setNotification({
+//       type: "error",
+//       message: "Error getting warehouses",
+//     });
+//   } else {
+//     setNotification({
+//       type: "success",
+//       message: "Successfully retrieved warehouses!",
+//     });
+//     setWarehouses(warehouses);
+//   }
+// }
 
-  console.log(data);
-  const res = await perform("post", "/additembatch", data);
-  if (res.status !== 200 && res.status !== 201) {
-    setNotification({ type: "error", message: "Error adding item Batch" });
-  } else {
-    setNotification({
-      type: "success",
-      message: "Item Batch added successfully",
-    });
-  }
-}
+// export async function getItems(setNotification, setItems) {
+//   const token = sessionStorage.getItem("access_token");
+//   if (!token) {
+//     setNotification({
+//       type: "error",
+//       message: "no access token, please refresh",
+//     });
+//     return;
+//   }
+//   const res = await perform("get", "/getitems");
+//   const items = await res.json();
+//   if (res.status !== 200 && res.status !== 201) {
+//     setNotification({
+//       type: "error",
+//       message: "Error getting items",
+//     });
+//   } else {
+//     setNotification({
+//       type: "success",
+//       message: "Successfully retrieved items!",
+//     });
+//     setItems(items);
+//   }
+// }
 
-export async function addWarehouse(address, setNotification) {
-  const token = sessionStorage.getItem("access_token");
-  if (!token) {
-    setNotification({
-      type: "error",
-      message: "no access token, please refresh",
-    });
-    return;
-  }
-
-  const data = {
-    address: address,
-  };
-
-  const res = await perform("set", "/addwarehouse", data);
-  if (res.status !== 200 && res.status !== 201) {
-    setNotification({
-      type: "error",
-      message: `Error adding warehouse ${address}`,
-    });
-  } else {
-    setNotification({
-      type: "success",
-      message: `Successfully added warehouse ${address}`,
-    });
-  }
-}
-
-export async function updateItemQuantityInAWarehouse(
-  warehouseID,
-  itemID,
-  newQuantity,
-  setNotification
-) {
-  const data = {
-    warehouseID: warehouseID,
-    itemID: itemID,
-    newQuantity: newQuantity,
-  };
-  const token = sessionStorage.getItem("access_token");
-  if (!token) {
-    setNotification({
-      type: "error",
-      message: "no access token, please refresh",
-    });
-    return;
-  }
-  const res = await perform("post", "/updatewarehouse", data);
-  if (res.status !== 200 && res.status !== 201) {
-    setNotification({ type: "error", message: "Error updating warehouse" });
-  } else {
-    setNotification({
-      type: "success",
-      message: "warehouse quantity updated successfully",
-    });
-  }
-}
-
-export async function getItem(itemID, setNotification) {
-  const token = sessionStorage.getItem("access_token");
-  if (!token) {
-    setNotification({
-      type: "error",
-      message: "no access token, please refresh",
-    });
-    return;
-  }
-  const data = {
-    itemID: itemID,
-  };
-  const res = await perform("get", `/getitem?id=${itemID}`, data);
-  if (res.status !== 200 && res.status !== 201) {
-    setNotification({ type: "error", message: "Error retrieving item data" });
-  } else {
-    setNotification({
-      type: "success",
-      message: "Successfully retrieved item data",
-    });
-  }
-}
-
-export async function getItemBatch(itemBatchID, setNotification) {
-  const token = sessionStorage.getItem("access_token");
-  if (!token) {
-    setNotification({
-      type: "error",
-      message: "no access token, please refresh",
-    });
-    return;
-  }
-  const data = {
-    itemBatchID: itemBatchID,
-  };
-
-  const res = await perform("get", "/getitembatch", data);
-  if (res.status !== 200 && res.status !== 201) {
-    setNotification({
-      type: "error",
-      message: "Error retrieving item batch data",
-    });
-  } else {
-    setNotification({
-      type: "success",
-      message: "Successfully retrieved item batch data",
-    });
-  }
-}
-
-export async function getWarehouses(setNotification, setWarehouses) {
-  const token = sessionStorage.getItem("access_token");
-  if (!token) {
-    setNotification({
-      type: "error",
-      message: "no access token, please refresh",
-    });
-    return;
-  }
-  const res = await perform("get", "/getwarehouses");
-  const warehouses = await res.json();
-  if (res.status !== 200 && res.status !== 201) {
-    setNotification({
-      type: "error",
-      message: "Error getting warehouses",
-    });
-  } else {
-    setNotification({
-      type: "success",
-      message: "Successfully retrieved warehouses!",
-    });
-    setWarehouses(warehouses);
-  }
-}
-
-export async function getItems(setNotification, setItems) {
-  const token = sessionStorage.getItem("access_token");
-  if (!token) {
-    setNotification({
-      type: "error",
-      message: "no access token, please refresh",
-    });
-    return;
-  }
-  const res = await perform("get", "/getitems");
-  const items = await res.json();
-  if (res.status !== 200 && res.status !== 201) {
-    setNotification({
-      type: "error",
-      message: "Error getting items",
-    });
-  } else {
-    setNotification({
-      type: "success",
-      message: "Successfully retrieved items!",
-    });
-    setItems(items);
-  }
-}
-
-export async function login(setNotification) {
-  const res = await perform("get", "/login");
-  const { token } = await await res.json();
-  if ((res.status !== 200 && res.status !== 201) || !token) {
-    setNotification({
-      type: "error",
-      message: "Error retrieving session key",
-    });
-  } else {
-    setNotification({
-      type: "success",
-      message: "Successfully retrieved session key!",
-    });
-    return token;
-  }
-}
+// export async function login(setNotification) {
+//   const res = await perform("get", "/login");
+//   const { token } = await await res.json();
+//   if ((res.status !== 200 && res.status !== 201) || !token) {
+//     setNotification({
+//       type: "error",
+//       message: "Error retrieving session key",
+//     });
+//   } else {
+//     setNotification({
+//       type: "success",
+//       message: "Successfully retrieved session key!",
+//     });
+//     return token;
+//   }
+// }

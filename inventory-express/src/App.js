@@ -3,7 +3,6 @@ import "./App.css";
 import { insertItemBatch, onItemClick } from "./utils";
 import { Button, TextField } from "@mui/material";
 import { useState } from "react";
-import NewItemBatchForm from "./components/BatchForm";
 import {
   addItemBatch,
   addWarehouse,

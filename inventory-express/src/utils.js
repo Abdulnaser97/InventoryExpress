@@ -1,14 +1,41 @@
-// Retrieve all warehouses that has the item
-export function retrieveWarehouses(item, warehouseByID) {
-  const warehouses = [];
-  for (let warehouseID of item.warehouseIDs) {
-    const warehouse = warehouseByID[warehouseID];
-    warehouses.push({
-      name: warehouse.name,
-      location: warehouse.location,
-      address: warehouse.address,
-      quantity: warehouse.inventory[item.id],
-    });
-  }
-  return warehouses;
-}
+// const handleWarehouseDelete = (warehouseId) => {
+//   if (warehouseId in warehouses) {
+//     const warehouse = warehouses[warehouseId];
+//     Object.entries(warehouse.inventory).forEach(([itemId, quantity]) => {
+//       const item = items[itemId];
+//       if (item) {
+//         item.quantity -= quantity;
+//         if (warehouseId in item.warehouseIDs) {
+//           item.warehouseIDs.delete(warehouseId);
+//         }
+//         setItems({ ...items, [itemId]: item });
+//       }
+//     });
+//     setWarehouses((prevState) => {
+//       const state = { ...prevState };
+//       delete state[warehouseId];
+//       return state;
+//     });
+//   }
+// };
+
+// const handleItemDelete = (itemId) => {
+//   if (itemId in items) {
+//     const warehouse = warehouses[itemId];
+//     Object.entries(warehouse.inventory).forEach(([itemId, quantity]) => {
+//       const item = items[itemId];
+//       if (item) {
+//         item.quantity -= quantity;
+//         if (itemId in item.itemIds) {
+//           item.itemIds.delete(itemId);
+//         }
+//         setItems({ ...items, [itemId]: item });
+//       }
+//     });
+//     setWarehouses((prevState) => {
+//       const state = { ...prevState };
+//       delete state[itemId];
+//       return state;
+//     });
+//   }
+// };
