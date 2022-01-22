@@ -29,7 +29,7 @@ export function insertItemBatch(
       item = items[itemId];
       item.quantity += quantity;
     }
-    item.warehouseIds.add(warehouseId);
+    item.warehouseIds[warehouseId] = true;
 
     setItems((prevState) => {
       const state = { ...prevState };

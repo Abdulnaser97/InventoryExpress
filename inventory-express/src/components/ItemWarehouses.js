@@ -65,7 +65,7 @@ export default function ItemWarehouses(props) {
         let warehouseList = [];
         props.itemResults.map((itemResult) => {
           const { id, warehouseIds } = itemResult;
-          let warehouseIdsArr = Array.from(warehouseIds);
+          let warehouseIdsArr = Object.keys(warehouseIds);
           let itemWarehouseList = warehouseIdsArr.map((warehouseId) => {
             let warehouse = props.warehouses[warehouseId];
             let warehouseQuantity = warehouse.inventory[id];
@@ -85,7 +85,7 @@ export default function ItemWarehouses(props) {
         setItemWarehouseComponents(warehouseList);
       } else if (props.selectedItemId && props.items[props.selectedItemId]) {
         let item = props.items[props.selectedItemId];
-        let warehouseIdsArr = Array.from(item.warehouseIds);
+        let warehouseIdsArr = Object.keys(item.warehouseIds);
         let itemWarehouseList = warehouseIdsArr.map((warehouseId) => {
           let warehouse = props.warehouses[warehouseId];
           let warehouseQuantity = warehouse.inventory[item.id];

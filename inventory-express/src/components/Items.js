@@ -18,7 +18,7 @@ export default function Items(props) {
     try {
       if (itemId in props.items) {
         const item = props.items[itemId];
-        Object.entries(item.warehouseIds).forEach((warehouseId) => {
+        Object.keys(item.warehouseIds).forEach((warehouseId) => {
           const warehouse = props.warehouses[warehouseId];
           if (warehouse && warehouse.inventory[itemId]) {
             delete warehouse.inventory[itemId];

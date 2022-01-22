@@ -32,7 +32,7 @@ export default function AddItemBatch(props) {
       props.itemResults.forEach((item) => {
         const { id, warehouseIds, name } = item;
         if (props.items[id]) {
-          for (let itemWhId of Array.from(warehouseIds)) {
+          for (let itemWhId of Object.keys(warehouseIds)) {
             if (itemWhId === warehouseId && props.itemName === name) {
               searchResultItemId = id;
               break;

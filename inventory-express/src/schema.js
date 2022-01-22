@@ -12,7 +12,7 @@ export class Warehouse {
 
 export class Item {
   constructor(name, quantity, imageURL) {
-    this.warehouseIds = new Set();
+    this.warehouseIds = {}; // Would have been better to use a set here, but set can't be stored as string in sessionStorage
     this.id = uuidv4();
     this.name = name;
     this.quantity = quantity;
