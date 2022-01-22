@@ -1,4 +1,4 @@
-import { Typography, TextField, Button, Snackbar, Alert } from "@mui/material";
+import { Typography, TextField, Snackbar, Alert } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import AddItemBatch from "./components/AddItemBatch";
 import Warehouses from "./components/Warehouses";
@@ -23,13 +23,10 @@ export default function Dashboard() {
 
   // Update item results when item name changes
   useEffect(() => {
-    console.log("items >>>>>>", items);
     if (fuse && itemName) {
       const results = fuse.search(itemName);
       const resultValues =
         results.length > 0 ? results.map((it) => it.item) : [];
-
-      console.log("FUSE >>>>>>>>>>>>>>>> ", resultValues);
       setItemResults(resultValues);
     } else if (!itemName && items) {
       setItemResults(Object.values(items));
@@ -79,7 +76,6 @@ export default function Dashboard() {
     if (JSON.parse(sessionItemBatches)) {
       setItemBatches(JSON.parse(sessionItemBatches));
     }
-    console.log(warehouses);
   }, []);
 
   return (
@@ -107,71 +103,87 @@ export default function Dashboard() {
       )}
 
       <div className="search-div">
-        <Typography variant="h4" my={2}>
-          Inventory Management
+        <Typography
+          variant="h4"
+          my={2}
+          style={{ color: "#5c5c5c", fontWeight: "bold", marginBottom: "20px" }}
+        >
+          Inventory Express
         </Typography>
-        <div>
-          <TextField
-            style={{ margin: "5px" }}
-            type="text"
-            label="Search Inventory Items"
-            variant="outlined"
-            onChange={onSearch}
-            value={itemName}
-            focused={itemName ? true : false}
-          />
-        </div>
+        <TextField
+          style={{ margin: "5px", width: "100%", backgroundColor: "#f5f5f5" }}
+          type="text"
+          label="Search Inventory Items"
+          variant="outlined"
+          onChange={onSearch}
+          value={itemName}
+        />
       </div>
       <div className="content-view">
         <div className="item-viewer">
-          <Items
-            selectedItemId={selectedItemId}
-            setSelectedItemId={setSelectedItemId}
-            warehouses={warehouses}
-            setWarehouses={setWarehouses}
-            setNotification={setNotification}
-            items={items}
-            setItems={setItems}
-            itemBatches={itemBatches}
-            setItemBatches={setItemBatches}
-            itemResults={itemResults}
-          />
-          <div className="item-viewer-container">
-            <div className="warehouse-list">
-              <Typography variant="h6" m={2}>
-                Item batches
-              </Typography>
+          <div className="items">
+            <Typography
+              variant="h6"
+              m={1}
+              style={{ color: "#5c5c5c", fontWeight: "bold" }}
+            >
+              Global Inventory
+            </Typography>
+            <Items
+              selectedItemId={selectedItemId}
+              setSelectedItemId={setSelectedItemId}
+              warehouses={warehouses}
+              setWarehouses={setWarehouses}
+              setNotification={setNotification}
+              items={items}
+              setItems={setItems}
+              itemBatches={itemBatches}
+              setItemBatches={setItemBatches}
+              itemResults={itemResults}
+            />
+          </div>
+          <div className="item-batches">
+            <Typography
+              variant="h6"
+              m={1}
+              style={{ color: "#5c5c5c", fontWeight: "bold" }}
+            >
+              Item Batches
+            </Typography>
 
-              <ItemBatches
-                selectedItemId={selectedItemId}
-                warehouses={warehouses}
-                setWarehouses={setWarehouses}
-                setNotification={setNotification}
-                items={items}
-                setItems={setItems}
-                itemBatches={itemBatches}
-                setItemBatches={setItemBatches}
-                itemResults={itemResults}
-                itemName={itemName}
-              />
-            </div>
-            <div className="warehouse-list">
-              <Typography variant="h6" m={2}>
-                Warehouses with item in stock
-              </Typography>
-              <ItemWarehouses
-                selectedItemId={selectedItemId}
-                warehouses={warehouses}
-                setWarehouses={setWarehouses}
-                setNotification={setNotification}
-                items={items}
-                setItems={setItems}
-                itemBatches={itemBatches}
-                setItemBatches={setItemBatches}
-                itemResults={itemResults}
-                itemName={itemName}
-              />
-            </div>
+            <ItemBatches
+              selectedItemId={selectedItemId}
+              warehouses={warehouses}
+              setWarehouses={setWarehouses}
+              setNotification={setNotification}
+              items={items}
+              setItems={setItems}
+              itemBatches={itemBatches}
+              setItemBatches={setItemBatches}
+              itemResults={itemResults}
+              itemName={itemName}
+            />
+          </div>
+          <div className="item-warehouses">
+            <Typography
+              variant="h6"
+              m={1}
+              style={{ color: "#5c5c5c", fontWeight: "bold" }}
+            >
+              Warehouses With Item In Stock
+            </Typography>
+            <ItemWarehouses
+              selectedItemId={selectedItemId}
+              warehouses={warehouses}
+              setWarehouses={setWarehouses}
+              setNotification={setNotification}
+              items={items}
+              setItems={setItems}
+              itemBatches={itemBatches}
+              setItemBatches={setItemBatches}
+              itemResults={itemResults}
+              itemName={itemName}
+            />
           </div>
         </div>
 

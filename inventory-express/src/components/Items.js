@@ -1,10 +1,4 @@
-import {
-  IconButton,
-  ListItem,
-  ListItemText,
-  List,
-  ListItemButton,
-} from "@mui/material";
+import { IconButton, ListItemText, List, ListItemButton } from "@mui/material";
 import { useEffect, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -19,6 +13,7 @@ export default function Items(props) {
 
     props.setSelectedItemId(itemId);
   };
+
   const handleItemDelete = (itemId) => {
     try {
       if (itemId in props.items) {
@@ -49,6 +44,7 @@ export default function Items(props) {
     }
   };
 
+  // Filter items to render matches only
   useEffect(() => {
     let itemList;
     if (props.itemResults && props.itemResults.length > 0) {
@@ -87,7 +83,10 @@ export default function Items(props) {
   }, [props.items, props.warehouses, props.selectedItemId, props.itemResults]);
 
   return (
-    <div className="item-viewer-container">
+    <div
+      className="flex-list"
+      style={{ height: "75%", width: "95%", marginTop: "10px" }}
+    >
       <List>{itemComponents}</List>
     </div>
   );

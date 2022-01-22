@@ -1,4 +1,3 @@
-import "./AddItemBatch.css";
 import {
   Button,
   FormControl,
@@ -27,13 +26,14 @@ export default function AddItemBatch(props) {
     setwarehouseId(event.target.value);
   };
 
+  // Check if item name exists. If so, set itemId
   useEffect(() => {
     let searchResultItemId = null;
     if (props.itemResults && props.itemResults.length > 0) {
       props.itemResults.forEach((item) => {
         const { id, warehouseIds, name } = item;
         if (props.items[id]) {
-          for (let itemWhId of warehouseIds) {
+          for (let itemWhId of Array.from(warehouseIds)) {
             if (itemWhId === warehouseId && props.itemName === name) {
               searchResultItemId = id;
               break;
@@ -47,21 +47,29 @@ export default function AddItemBatch(props) {
 
   return (
     <div className="item-control">
-      <Typography variant="h6" my={2}>
+      <Typography
+        variant="h6"
+        style={{
+          color: "#5c5c5c",
+          fontWeight: "bold",
+          marginBottom: "10px",
+        }}
+      >
         Add Item Batch
       </Typography>
       <TextField
         style={{ margin: "8px", width: "90%" }}
+        size="small"
         type="text"
         label="item name"
         variant="outlined"
         onChange={handleNameChange}
         value={props.itemName}
-        focused={props.itemName ? true : false}
       />
 
       <TextField
         style={{ margin: "8px", width: "90%" }}
+        size="small"
         type="text"
         label="Batch quantity"
         variant="outlined"
@@ -70,7 +78,8 @@ export default function AddItemBatch(props) {
       />
 
       <FormControl
-        style={{ width: "90%", marginBottom: "16px", marginTop: "8px" }}
+        style={{ width: "90%", marginBottom: "15px", marginTop: "8px" }}
+        size="small"
       >
         <InputLabel>Warehouse</InputLabel>
         <Select
@@ -92,6 +101,7 @@ export default function AddItemBatch(props) {
       <Button
         variant="contained"
         color="primary"
+        style={{ width: "30%", borderRadius: "10px" }}
         onClick={() =>
           insertItemBatch(
             warehouseId,
