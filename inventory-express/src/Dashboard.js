@@ -6,6 +6,17 @@ import Items from "./components/Items";
 import ItemBatches from "./components/ItemBatches";
 import ItemWarehouses from "./components/ItemWarehouses";
 import Fuse from "fuse.js";
+import { withStyles } from "@mui/styles";
+
+const StyledTextField = withStyles({
+  root: {
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
+        borderRadius: `30px`,
+      },
+    },
+  },
+})(TextField);
 
 export default function Dashboard() {
   const [warehouses, setWarehouses] = useState(undefined);
@@ -110,8 +121,14 @@ export default function Dashboard() {
         >
           Inventory Express
         </Typography>
-        <TextField
-          style={{ margin: "5px", width: "100%", backgroundColor: "#f5f5f5" }}
+        <StyledTextField
+          sx={{ borderRadius: 16 }}
+          style={{
+            margin: "5px",
+            width: "100%",
+            backgroundColor: "#f5f5f5",
+            borderRadius: "30px",
+          }}
           type="text"
           label="Search Inventory Items"
           variant="outlined"

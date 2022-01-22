@@ -1,9 +1,26 @@
-import { IconButton, ListItemText, List, ListItemButton } from "@mui/material";
+import {
+  IconButton,
+  CardContent,
+  Grid,
+  Card,
+  Typography,
+  CardActionArea,
+} from "@mui/material";
+
+import { makeStyles } from "@mui/styles";
 import { useEffect, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+const useStyles = makeStyles({
+  gridContainer: {
+    paddingLeft: "40px",
+    paddingRight: "40px",
+  },
+});
+
 export default function Items(props) {
   const [itemComponents, setItemComponents] = useState(undefined);
+  const classes = useStyles();
 
   const handleItemSelect = (itemId) => {
     if (props.selectedItemId === itemId) {
@@ -58,25 +75,85 @@ export default function Items(props) {
     let itemListComp = itemList.map((item) => {
       const { id, name, quantity } = item;
       return (
-        <ListItemButton
+        // <ListItemButton
+        //   key={id}
+        //   style={{ marginLeft: "20px", borderRadius: "7px" }}
+        //   onClick={() => handleItemSelect(id)}
+        //   selected={props.selectedItemId === id}
+        // >
+        //   <ListItemText primary={name} style={{ marginLeft: "20px" }} />
+        //   <ListItemText style={{ marginLeft: "20px" }}>
+        //     {`Qt: ${quantity}`}
+        //   </ListItemText>
+        //   <IconButton
+        //     style={{ marginLeft: "20px", marginRight: "20px" }}
+        //     edge="end"
+        //     aria-label="delete"
+        //     onClick={() => handleItemDelete(id)}
+        //   >
+        //     <DeleteIcon />
+        //   </IconButton>
+        // </ListItemButton>
+
+        <Grid
           key={id}
-          style={{ marginLeft: "20px", borderRadius: "7px" }}
-          onClick={() => handleItemSelect(id)}
-          selected={props.selectedItemId === id}
+          item
+          xs={5}
+          sm={4}
+          md={3}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
         >
-          <ListItemText primary={name} style={{ marginLeft: "20px" }} />
-          <ListItemText style={{ marginLeft: "20px" }}>
-            {`Qt: ${quantity}`}
-          </ListItemText>
-          <IconButton
-            style={{ marginLeft: "20px", marginRight: "20px" }}
-            edge="end"
-            aria-label="delete"
-            onClick={() => handleItemDelete(id)}
+          <CardActionArea
+            onClick={() => handleItemSelect(id)}
+            selected={props.selectedItemId === id}
           >
-            <DeleteIcon />
-          </IconButton>
-        </ListItemButton>
+            <Card
+              key={id}
+              style={{
+                borderRadius: "10px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "middle",
+              }}
+            >
+              <CardContent
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginTop: "3px",
+                  marginLeft: "5px",
+                  marginRight: "7px",
+                }}
+              >
+                <Typography
+                  sx={{ mb: 1.5 }}
+                  style={{ fontWeight: "bold", marginBottom: "0" }}
+                >
+                  {name}
+                </Typography>
+                <Typography sx={{ mb: 1 }} style={{ marginBottom: "0" }}>
+                  {`Qt: ${quantity}`}
+                </Typography>
+                <br />
+
+                <IconButton
+                  edge="end"
+                  aria-label="delete"
+                  onClick={() => handleItemDelete(id)}
+                  style={{ zIndex: 9 }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </CardContent>
+            </Card>
+          </CardActionArea>
+        </Grid>
       );
     });
     setItemComponents(itemListComp);
@@ -87,7 +164,15 @@ export default function Items(props) {
       className="flex-list"
       style={{ height: "75%", width: "95%", marginTop: "10px" }}
     >
-      <List>{itemComponents}</List>
+      <Grid
+        container
+        spacing={4}
+        className={classes.gridContainer}
+        justify="center"
+        style={{ marginTop: "10px" }}
+      >
+        {itemComponents}
+      </Grid>
     </div>
   );
 }
