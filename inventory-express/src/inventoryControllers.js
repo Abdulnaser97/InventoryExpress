@@ -1,4 +1,4 @@
-const { Item, ItemBatch, Warehouse } = require("./schema");
+import { Item, ItemBatch, Warehouse } from "./schema";
 
 export function insertItemBatch(
   warehouseId,
