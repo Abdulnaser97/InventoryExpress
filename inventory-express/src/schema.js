@@ -28,6 +28,6 @@ export class ItemBatch {
     this.batchId = uuidv4();
     this.quantity = quantity;
     this.warehouseId = warehouseId;
-    this.dateAdded = new Date().toDateString();
+    this.dateAdded = new Date().toISOString();
   }
 }

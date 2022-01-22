@@ -13,6 +13,10 @@ export default function ItemBatches(props) {
         const warehouse = props.warehouses[itemBatch.warehouseId];
         if (warehouse && warehouse.inventory[itemBatch.itemId]) {
           warehouse.inventory[itemBatch.itemId] -= itemBatch.quantity;
+          if (warehouse.inventory[itemBatch.itemId] < 0) {
+            warehouse.inventory[itemBatch.itemId] = 0;
+          }
+
           props.setWarehouses({
             ...props.warehouses,
             [itemBatch.warehouseId]: warehouse,
@@ -23,6 +27,10 @@ export default function ItemBatches(props) {
         const item = props.items[itemBatch.itemId];
         if (item && item.quantity > 0) {
           item.quantity -= itemBatch.quantity;
+          if (item.quantity < 0) {
+            item.quantity = 0;
+          }
+
           props.setItems({
             ...props.items,
             [itemBatch.itemId]: item,
@@ -84,7 +92,7 @@ export default function ItemBatches(props) {
         setBatchesComponent(itemBatchList);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`Error loading item batches ${e}`);
       props.setNotification({
         type: "error",
         message: "Error loading item batches",
@@ -93,7 +101,7 @@ export default function ItemBatches(props) {
   }, [props.itemBatches, props.selectedItemId]);
 
   return (
-    <div className="item-viewer-container">
+    <div className="flex-list">
       <List>{props.itemBatches && batchesComponent}</List>
     </div>
   );

@@ -1,8 +1,0 @@
-.item-control {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: middle;
-  margin-bottom: 10px;
-}

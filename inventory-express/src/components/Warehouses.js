@@ -41,27 +41,37 @@ export default function Warehouses(props) {
 
   return (
     <div className="warehouse-view">
-      <div className="warehouse-control">
-        <Typography variant="h6">Warehouses</Typography>
-        <TextField
-          style={{ margin: "10px" }}
-          type="text"
-          label="warehouse Address"
-          variant="outlined"
-          onChange={handleAddressChange}
-          value={address}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() =>
-            addWarehouse(address, props.setWarehouses, props.setNotification)
-          }
-        >
-          + Warehouse
-        </Button>
-      </div>
-      <div className="warehouse-list">
+      <Typography
+        variant="h6"
+        style={{
+          color: "#5c5c5c",
+          fontWeight: "bold",
+          marginBottom: "15px",
+          borderRadius: "10px",
+        }}
+      >
+        Warehouses
+      </Typography>
+      <TextField
+        type="text"
+        label="warehouse Address"
+        variant="outlined"
+        size="small"
+        style={{ width: "90%", marginBottom: "15px" }}
+        onChange={handleAddressChange}
+        value={address}
+      />
+      <Button
+        variant="contained"
+        color="primary"
+        style={{ minWidth: "30%", marginBottom: "15px", borderRadius: "10px" }}
+        onClick={() =>
+          addWarehouse(address, props.setWarehouses, props.setNotification)
+        }
+      >
+        + Warehouse
+      </Button>
+      <div className="flex-list" style={{ height: "50%" }}>
         <List>
           {props.warehouses &&
             Object.entries(props.warehouses).map((wh) => {

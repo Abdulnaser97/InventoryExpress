@@ -1,6 +1,6 @@
-import { IconButton, ListItem, ListItemText, List } from "@mui/material";
+import { List } from "@mui/material";
 import { useEffect, useState } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
+import ItemWarehouseComponent from "./ItemWarehouseComponent";
 
 export default function ItemWarehouses(props) {
   const [itemWarehouseComponents, setItemWarehouseComponents] =
@@ -51,11 +51,13 @@ export default function ItemWarehouses(props) {
 
   useEffect(() => {
     try {
-      if (!props.itemName || !props.itemResults) {
+      if (!props.selectedItemId && (!props.itemName || !props.itemResults)) {
         setItemWarehouseComponents(undefined);
         return;
       }
+
       if (
+        !props.selectedItemId &&
         props.warehouses &&
         props.itemResults &&
         props.itemResults.length > 0
@@ -69,32 +71,36 @@ export default function ItemWarehouses(props) {
             let warehouseQuantity = warehouse.inventory[id];
 
             return (
-              <ListItem
-                style={{ marginLeft: "20px", borderRadius: "7px" }}
-                secondaryAction={
-                  <IconButton
-                    edge="end"
-                    aria-label="edit Quantity"
-                    onClick={() => editItemWarehouseQt(warehouseId, id, 22)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                }
-                key={warehouseId + id}
-              >
-                <ListItemText
-                  primary={warehouse.address}
-                  style={{ marginLeft: "20px" }}
-                />
-                <ListItemText style={{ marginLeft: "20px" }}>
-                  {`Qt: ${warehouseQuantity}`}
-                </ListItemText>
-              </ListItem>
+              <ItemWarehouseComponent
+                itemId={id}
+                warehouseId={warehouseId}
+                warehouseQuantity={warehouseQuantity}
+                warehouse={warehouse}
+                editItemWarehouseQt={editItemWarehouseQt}
+              />
             );
           });
           warehouseList.push(...itemWarehouseList);
         });
         setItemWarehouseComponents(warehouseList);
+      } else if (props.selectedItemId && props.items[props.selectedItemId]) {
+        let item = props.items[props.selectedItemId];
+        let warehouseIdsArr = Array.from(item.warehouseIds);
+        let itemWarehouseList = warehouseIdsArr.map((warehouseId) => {
+          let warehouse = props.warehouses[warehouseId];
+          let warehouseQuantity = warehouse.inventory[item.id];
+
+          return (
+            <ItemWarehouseComponent
+              itemId={item.id}
+              warehouseId={warehouseId}
+              warehouseQuantity={warehouseQuantity}
+              warehouse={warehouse}
+              editItemWarehouseQt={editItemWarehouseQt}
+            />
+          );
+        });
+        setItemWarehouseComponents(itemWarehouseList);
       }
     } catch (e) {
       console.log(`Error rendering item warehouses`);
@@ -111,7 +117,7 @@ export default function ItemWarehouses(props) {
   ]);
 
   return (
-    <div className="item-viewer-container">
+    <div className="flex-list">
       <List>{props.warehouses && itemWarehouseComponents}</List>
     </div>
   );
