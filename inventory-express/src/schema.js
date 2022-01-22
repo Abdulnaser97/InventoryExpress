@@ -1,18 +1,18 @@
-const { v4: uuidv4 } = require("uuid");
+import { v4 as uuidv4 } from "uuid";
 
-class Warehouse {
+export class Warehouse {
   constructor(address) {
     this.id = uuidv4();
     this.location = null;
     this.address = address;
-    this.inventory = {}; // {itemID: quantity}
+    this.inventory = {}; // {itemId: quantity}
     this.distance = null; // needs to be removed
   }
 }
 
-class Item {
+export class Item {
   constructor(name, quantity, imageURL) {
-    this.warehouseIDs = new Set();
+    this.warehouseIds = new Set();
     this.id = uuidv4();
     this.name = name;
     this.quantity = quantity;
@@ -21,15 +21,13 @@ class Item {
   }
 }
 
-class ItemBatch {
-  constructor(name, itemID, quantity, warehouseID) {
+export class ItemBatch {
+  constructor(name, itemId, quantity, warehouseId) {
     this.name = name;
-    this.itemID = itemID;
+    this.itemId = itemId;
     this.batchId = uuidv4();
     this.quantity = quantity;
-    this.warehouseID = warehouseID;
+    this.warehouseId = warehouseId;
     this.dateAdded = new Date().toDateString();
   }
 }
-
-module.exports = { Warehouse, Item, ItemBatch };

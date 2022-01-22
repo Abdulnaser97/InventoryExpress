@@ -1,12 +1,12 @@
 // export async function updateItemQuantityInAWarehouse(
-//   warehouseID,
-//   itemID,
+//   warehouseId,
+//   itemId,
 //   newQuantity,
 //   setNotification
 // ) {
 //   const data = {
-//     warehouseID: warehouseID,
-//     itemID: itemID,
+//     warehouseId: warehouseId,
+//     itemId: itemId,
 //     newQuantity: newQuantity,
 //   };
 //   const token = sessionStorage.getItem("access_token");
@@ -28,7 +28,7 @@
 //   }
 // }
 
-// export async function getItem(itemID, setNotification) {
+// export async function getItem(itemId, setNotification) {
 //   const token = sessionStorage.getItem("access_token");
 //   if (!token) {
 //     setNotification({
@@ -38,9 +38,9 @@
 //     return;
 //   }
 //   const data = {
-//     itemID: itemID,
+//     itemId: itemId,
 //   };
-//   const res = await perform("get", `/getitem?id=${itemID}`, data);
+//   const res = await perform("get", `/getitem?id=${itemId}`, data);
 //   if (res.status !== 200 && res.status !== 201) {
 //     setNotification({ type: "error", message: "Error retrieving item data" });
 //   } else {
@@ -51,7 +51,7 @@
 //   }
 // }
 
-// export async function getItemBatch(itemBatchID, setNotification) {
+// export async function getItemBatch(itemBatchId, setNotification) {
 //   const token = sessionStorage.getItem("access_token");
 //   if (!token) {
 //     setNotification({
@@ -61,7 +61,7 @@
 //     return;
 //   }
 //   const data = {
-//     itemBatchID: itemBatchID,
+//     itemBatchId: itemBatchId,
 //   };
 
 //   const res = await perform("get", "/getitembatch", data);
