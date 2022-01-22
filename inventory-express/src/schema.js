@@ -5,14 +5,14 @@ class Warehouse {
     this.id = uuidv4();
     this.location = null;
     this.address = address;
-    this.inventory = {}; // {itemID: quantity}
+    this.inventory = {}; // {itemId: quantity}
     this.distance = null; // needs to be removed
   }
 }
 
 class Item {
   constructor(name, quantity, imageURL) {
-    this.warehouseIDs = new Set();
+    this.warehouseIds = new Set();
     this.id = uuidv4();
     this.name = name;
     this.quantity = quantity;
@@ -22,12 +22,12 @@ class Item {
 }
 
 class ItemBatch {
-  constructor(name, itemID, quantity, warehouseID) {
+  constructor(name, itemId, quantity, warehouseId) {
     this.name = name;
-    this.itemID = itemID;
+    this.itemId = itemId;
     this.batchId = uuidv4();
     this.quantity = quantity;
-    this.warehouseID = warehouseID;
+    this.warehouseId = warehouseId;
     this.dateAdded = new Date().toDateString();
   }
 }

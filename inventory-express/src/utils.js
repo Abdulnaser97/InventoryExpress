@@ -5,8 +5,8 @@
 //       const item = items[itemId];
 //       if (item) {
 //         item.quantity -= quantity;
-//         if (warehouseId in item.warehouseIDs) {
-//           item.warehouseIDs.delete(warehouseId);
+//         if (warehouseId in item.warehouseIds) {
+//           item.warehouseIds.delete(warehouseId);
 //         }
 //         setItems({ ...items, [itemId]: item });
 //       }

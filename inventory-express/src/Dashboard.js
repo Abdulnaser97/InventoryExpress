@@ -4,23 +4,50 @@ import AddItemBatch from "./components/AddItemBatch";
 import Warehouses from "./components/Warehouses";
 import Items from "./components/Items";
 import ItemBatches from "./components/ItemBatches";
+import ItemWarehouses from "./components/ItemWarehouses";
+import Fuse from "fuse.js";
 
 export default function Dashboard() {
   const [warehouses, setWarehouses] = useState(undefined);
   const [items, setItems] = useState(undefined);
   const [itemBatches, setItemBatches] = useState(undefined);
   const [itemName, setItemName] = useState(undefined);
-  const [selectedItem, setSelectedItem] = useState(undefined);
-  const [retrievedItem, setRetrievedItem] = useState(undefined);
+  const [selectedItemId, setSelectedItemId] = useState(undefined);
   const [notificaton, setNotification] = useState(null);
+  const [fuse, setFuse] = useState(null); // Fuse.js instance for searching items
+  const [itemResults, setItemResults] = useState([]); // Result of item name search
 
-  const handleNameChange = (event) => {
+  const onSearch = (event) => {
     setItemName(event.target.value);
   };
 
-  const searchItem = async () => {
-    setSelectedItem({ id: "sth", name: "item name" });
-  };
+  // Update item results when item name changes
+  useEffect(() => {
+    console.log("items >>>>>>", items);
+    if (fuse && itemName) {
+      const results = fuse.search(itemName);
+      const resultValues =
+        results.length > 0 ? results.map((it) => it.item) : [];
+
+      console.log("FUSE >>>>>>>>>>>>>>>> ", resultValues);
+      setItemResults(resultValues);
+    } else if (!itemName && items) {
+      setItemResults(Object.values(items));
+    }
+  }, [itemName, fuse]);
+
+  // Update items in sessionStorage and sets fuse.js instance for searching items
+  useEffect(() => {
+    if (items !== undefined) {
+      sessionStorage.setItem("items", JSON.stringify(items));
+      const itemsArray = Object.values(items);
+      const fuse = new Fuse(itemsArray, {
+        keys: ["name"],
+        threshold: 0.3,
+      });
+      setFuse(fuse);
+    }
+  }, [items]);
 
   // Update warehouses in sessionStorage
   useEffect(() => {
@@ -28,13 +55,6 @@ export default function Dashboard() {
       sessionStorage.setItem("warehouses", JSON.stringify(warehouses));
     }
   }, [warehouses]);
-
-  // Update items in sessionStorage
-  useEffect(() => {
-    if (items !== undefined) {
-      sessionStorage.setItem("items", JSON.stringify(items));
-    }
-  }, [items]);
 
   // Update item batches in sessionStorage
   useEffect(() => {
@@ -94,24 +114,19 @@ export default function Dashboard() {
           <TextField
             style={{ margin: "5px" }}
             type="text"
-            label="search"
+            label="Search Inventory Items"
             variant="outlined"
-            onChange={handleNameChange}
+            onChange={onSearch}
             value={itemName}
+            focused={itemName ? true : false}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => searchItem()}
-          >
-            Search Item
-          </Button>
         </div>
       </div>
       <div className="content-view">
         <div className="item-viewer">
           <Items
-            selectedItem={selectedItem}
+            selectedItemId={selectedItemId}
+            setSelectedItemId={setSelectedItemId}
             warehouses={warehouses}
             setWarehouses={setWarehouses}
             setNotification={setNotification}
@@ -119,6 +134,7 @@ export default function Dashboard() {
             setItems={setItems}
             itemBatches={itemBatches}
             setItemBatches={setItemBatches}
+            itemResults={itemResults}
           />
           <div className="item-viewer-container">
             <div className="warehouse-list">
@@ -127,7 +143,7 @@ export default function Dashboard() {
               </Typography>
 
               <ItemBatches
-                selectedItem={selectedItem}
+                selectedItemId={selectedItemId}
                 warehouses={warehouses}
                 setWarehouses={setWarehouses}
                 setNotification={setNotification}
@@ -135,12 +151,26 @@ export default function Dashboard() {
                 setItems={setItems}
                 itemBatches={itemBatches}
                 setItemBatches={setItemBatches}
+                itemResults={itemResults}
+                itemName={itemName}
               />
             </div>
             <div className="warehouse-list">
               <Typography variant="h6" m={2}>
-                Waehouses with item in stock
+                Warehouses with item in stock
               </Typography>
+              <ItemWarehouses
+                selectedItemId={selectedItemId}
+                warehouses={warehouses}
+                setWarehouses={setWarehouses}
+                setNotification={setNotification}
+                items={items}
+                setItems={setItems}
+                itemBatches={itemBatches}
+                setItemBatches={setItemBatches}
+                itemResults={itemResults}
+                itemName={itemName}
+              />
             </div>
           </div>
         </div>
@@ -156,6 +186,7 @@ export default function Dashboard() {
             setItems={setItems}
             itemBatches={itemBatches}
             setItemBatches={setItemBatches}
+            itemResults={itemResults}
           />
 
           <Warehouses

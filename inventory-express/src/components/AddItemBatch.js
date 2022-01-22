@@ -13,8 +13,9 @@ import { useEffect } from "react/cjs/react.development";
 import { insertItemBatch } from "../inventoryControllers";
 
 export default function AddItemBatch(props) {
-  const [warehouseID, setwarehouseID] = useState("");
+  const [warehouseId, setwarehouseId] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [itemId, setItemId] = useState("");
 
   const handleNameChange = (event) => {
     props.setItemName(event.target.value);
@@ -22,13 +23,27 @@ export default function AddItemBatch(props) {
   const handleQuantityChange = (event) => {
     setQuantity(parseInt(event.target.value));
   };
-  const handlewarehouseIDChange = (event) => {
-    setwarehouseID(event.target.value);
+  const handlewarehouseIdChange = (event) => {
+    setwarehouseId(event.target.value);
   };
 
-  if (props.itemName) {
-    console.log("name exists");
-  }
+  useEffect(() => {
+    let searchResultItemId = null;
+    if (props.itemResults && props.itemResults.length > 0) {
+      props.itemResults.forEach((item) => {
+        const { id, warehouseIds, name } = item;
+        if (props.items[id]) {
+          for (let itemWhId of warehouseIds) {
+            if (itemWhId === warehouseId && props.itemName === name) {
+              searchResultItemId = id;
+              break;
+            }
+          }
+        }
+      });
+    }
+    setItemId(searchResultItemId);
+  }, [props.itemResults, props.itemName]);
 
   return (
     <div className="item-control">
@@ -42,6 +57,7 @@ export default function AddItemBatch(props) {
         variant="outlined"
         onChange={handleNameChange}
         value={props.itemName}
+        focused={props.itemName ? true : false}
       />
 
       <TextField
@@ -58,13 +74,17 @@ export default function AddItemBatch(props) {
       >
         <InputLabel>Warehouse</InputLabel>
         <Select
-          value={warehouseID}
+          value={warehouseId}
           label="Warehouse"
-          onChange={handlewarehouseIDChange}
+          onChange={handlewarehouseIdChange}
         >
           {props.warehouses &&
             Object.entries(props.warehouses).map((wh) => {
-              return <MenuItem value={wh[0]}>{wh[1].address}</MenuItem>;
+              return (
+                <MenuItem key={wh[0]} value={wh[0]}>
+                  {wh[1].address}
+                </MenuItem>
+              );
             })}
         </Select>
       </FormControl>
@@ -74,9 +94,9 @@ export default function AddItemBatch(props) {
         color="primary"
         onClick={() =>
           insertItemBatch(
-            warehouseID,
+            warehouseId,
             props.itemName,
-            null,
+            itemId,
             quantity,
             props.setNotification,
             props.items,

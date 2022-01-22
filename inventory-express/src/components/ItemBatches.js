@@ -10,22 +10,22 @@ export default function ItemBatches(props) {
       if (batchId in props.itemBatches) {
         const itemBatch = props.itemBatches[batchId];
         // Update warehouse quantity
-        const warehouse = props.warehouses[itemBatch.warehouseID];
-        if (warehouse && warehouse.inventory[itemBatch.itemID]) {
-          warehouse.inventory[itemBatch.itemID] -= itemBatch.quantity;
+        const warehouse = props.warehouses[itemBatch.warehouseId];
+        if (warehouse && warehouse.inventory[itemBatch.itemId]) {
+          warehouse.inventory[itemBatch.itemId] -= itemBatch.quantity;
           props.setWarehouses({
             ...props.warehouses,
-            [itemBatch.warehouseID]: warehouse,
+            [itemBatch.warehouseId]: warehouse,
           });
         }
 
         // Update warehouse quantity
-        const item = props.items[itemBatch.itemID];
+        const item = props.items[itemBatch.itemId];
         if (item && item.quantity > 0) {
           item.quantity -= itemBatch.quantity;
           props.setItems({
             ...props.items,
-            [itemBatch.itemID]: item,
+            [itemBatch.itemId]: item,
           });
         }
 
@@ -45,9 +45,18 @@ export default function ItemBatches(props) {
   };
 
   useEffect(() => {
-    if (props.itemBatches) {
-      let itemBatchList = Object.entries(props.itemBatches).map(
-        ([itemBatchId, itemBatch]) => {
+    try {
+      if (props.itemBatches) {
+        let itemBatches;
+        if (props.selectedItemId && props.items[props.selectedItemId]) {
+          let item = props.items[props.selectedItemId];
+          itemBatches = Object.entries(props.itemBatches).filter(
+            (itemBatch) => itemBatch[1].itemId === item.id
+          );
+        } else {
+          itemBatches = Object.entries(props.itemBatches);
+        }
+        let itemBatchList = itemBatches.map(([itemBatchId, itemBatch]) => {
           return (
             <ListItem
               secondaryAction={
@@ -71,25 +80,21 @@ export default function ItemBatches(props) {
               </ListItemText>
             </ListItem>
           );
-        }
-      );
-      setBatchesComponent(itemBatchList);
+        });
+        setBatchesComponent(itemBatchList);
+      }
+    } catch (e) {
+      console.log(e);
+      props.setNotification({
+        type: "error",
+        message: "Error loading item batches",
+      });
     }
-  }, [props.itemBatches]);
+  }, [props.itemBatches, props.selectedItemId]);
 
   return (
     <div className="item-viewer-container">
-      {props.selectedItem ? (
-        <ListItem
-          warehouses={[]}
-          itemId={1}
-          name={"pencil"}
-          batches={[]}
-          quantity={12}
-        />
-      ) : (
-        <List>{props.itemBatches && batchesComponent}</List>
-      )}
+      <List>{props.itemBatches && batchesComponent}</List>
     </div>
   );
 }

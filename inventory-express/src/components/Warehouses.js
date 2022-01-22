@@ -25,8 +25,8 @@ export default function Warehouses(props) {
         const item = props.items[itemId];
         if (item) {
           item.quantity -= quantity;
-          if (warehouseId in item.warehouseIDs) {
-            item.warehouseIDs.delete(warehouseId);
+          if (warehouseId in item.warehouseIds) {
+            item.warehouseIds.delete(warehouseId);
           }
           props.setItems({ ...props.items, [itemId]: item });
         }

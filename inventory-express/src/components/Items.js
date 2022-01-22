@@ -1,15 +1,29 @@
-import { IconButton, ListItem, ListItemText, List } from "@mui/material";
+import {
+  IconButton,
+  ListItem,
+  ListItemText,
+  List,
+  ListItemButton,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function Items(props) {
   const [itemComponents, setItemComponents] = useState(undefined);
 
+  const handleItemSelect = (itemId) => {
+    if (props.selectedItemId === itemId) {
+      props.setSelectedItemId(undefined);
+      return;
+    }
+
+    props.setSelectedItemId(itemId);
+  };
   const handleItemDelete = (itemId) => {
     try {
       if (itemId in props.items) {
         const item = props.items[itemId];
-        Object.entries(item.warehouseIDs).forEach((warehouseId) => {
+        Object.entries(item.warehouseIds).forEach((warehouseId) => {
           const warehouse = props.warehouses[warehouseId];
           if (warehouse && warehouse.inventory[itemId]) {
             delete warehouse.inventory[itemId];
@@ -36,45 +50,45 @@ export default function Items(props) {
   };
 
   useEffect(() => {
-    if (props.items) {
-      let itemList = Object.entries(props.items).map(([itemId, item]) => {
-        return (
-          <ListItem
-            secondaryAction={
-              <IconButton
-                edge="end"
-                aria-label="delete"
-                onClick={() => handleItemDelete(itemId)}
-              >
-                <DeleteIcon />
-              </IconButton>
-            }
-            key={itemId}
-          >
-            <ListItemText primary={item.name} />
-            <ListItemText style={{ marginLeft: "1em" }}>
-              {`Qt: ${item.quantity}`}
-            </ListItemText>
-          </ListItem>
-        );
-      });
-      setItemComponents(itemList);
+    let itemList;
+    if (props.itemResults && props.itemResults.length > 0) {
+      itemList = props.itemResults;
+    } else if (props.items) {
+      itemList = Object.values(props.items);
+    } else {
+      setItemComponents(undefined);
+      return;
     }
-  }, [props.items, props.warehouses]);
+    let itemListComp = itemList.map((item) => {
+      const { id, name, quantity } = item;
+      return (
+        <ListItemButton
+          key={id}
+          style={{ marginLeft: "20px", borderRadius: "7px" }}
+          onClick={() => handleItemSelect(id)}
+          selected={props.selectedItemId === id}
+        >
+          <ListItemText primary={name} style={{ marginLeft: "20px" }} />
+          <ListItemText style={{ marginLeft: "20px" }}>
+            {`Qt: ${quantity}`}
+          </ListItemText>
+          <IconButton
+            style={{ marginLeft: "20px", marginRight: "20px" }}
+            edge="end"
+            aria-label="delete"
+            onClick={() => handleItemDelete(id)}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </ListItemButton>
+      );
+    });
+    setItemComponents(itemListComp);
+  }, [props.items, props.warehouses, props.selectedItemId, props.itemResults]);
 
   return (
     <div className="item-viewer-container">
-      {props.selectedItem ? (
-        <ListItem
-          warehouses={[]}
-          itemId={1}
-          name={"pencil"}
-          batches={[]}
-          quantity={12}
-        />
-      ) : (
-        <List>{props.items && itemComponents}</List>
-      )}
+      <List>{itemComponents}</List>
     </div>
   );
 }
