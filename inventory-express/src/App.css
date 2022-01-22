@@ -106,3 +106,7 @@
 .MuiOutlinedInput-root {
   border-radius: 7px;
 }
+
+.MuiOutlinedInput-root fieldset {
+  border-radius: 30px;
+}

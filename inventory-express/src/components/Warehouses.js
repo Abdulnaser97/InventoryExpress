@@ -64,7 +64,7 @@ export default function Warehouses(props) {
       <Button
         variant="contained"
         color="primary"
-        style={{ minWidth: "30%", marginBottom: "15px", borderRadius: "10px" }}
+        style={{ minWidth: "30%", marginBottom: "15px", borderRadius: "30px" }}
         onClick={() =>
           addWarehouse(address, props.setWarehouses, props.setNotification)
         }

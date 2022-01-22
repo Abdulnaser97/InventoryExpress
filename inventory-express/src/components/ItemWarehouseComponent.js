@@ -12,7 +12,7 @@ export default function ItemWarehouseComponent(props) {
   };
   return (
     <ListItem
-      style={{ marginLeft: "20px", borderRadius: "7px" }}
+      style={{ marginLeft: "20px", borderRadius: "10px" }}
       key={props.warehouseId + props.itemId}
     >
       {!editQuantity && (

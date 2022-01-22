@@ -7,20 +7,11 @@ import {
   CardActionArea,
 } from "@mui/material";
 
-import { makeStyles } from "@mui/styles";
 import { useEffect, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const useStyles = makeStyles({
-  gridContainer: {
-    paddingLeft: "40px",
-    paddingRight: "40px",
-  },
-});
-
 export default function Items(props) {
   const [itemComponents, setItemComponents] = useState(undefined);
-  const classes = useStyles();
 
   const handleItemSelect = (itemId) => {
     if (props.selectedItemId === itemId) {
@@ -75,26 +66,6 @@ export default function Items(props) {
     let itemListComp = itemList.map((item) => {
       const { id, name, quantity } = item;
       return (
-        // <ListItemButton
-        //   key={id}
-        //   style={{ marginLeft: "20px", borderRadius: "7px" }}
-        //   onClick={() => handleItemSelect(id)}
-        //   selected={props.selectedItemId === id}
-        // >
-        //   <ListItemText primary={name} style={{ marginLeft: "20px" }} />
-        //   <ListItemText style={{ marginLeft: "20px" }}>
-        //     {`Qt: ${quantity}`}
-        //   </ListItemText>
-        //   <IconButton
-        //     style={{ marginLeft: "20px", marginRight: "20px" }}
-        //     edge="end"
-        //     aria-label="delete"
-        //     onClick={() => handleItemDelete(id)}
-        //   >
-        //     <DeleteIcon />
-        //   </IconButton>
-        // </ListItemButton>
-
         <Grid
           key={id}
           item
@@ -167,9 +138,8 @@ export default function Items(props) {
       <Grid
         container
         spacing={4}
-        className={classes.gridContainer}
         justify="center"
-        style={{ marginTop: "10px" }}
+        style={{ marginTop: "10px", paddingLeft: "40px", paddingRight: "40px" }}
       >
         {itemComponents}
       </Grid>

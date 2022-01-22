@@ -100,7 +100,7 @@ export default function AddItemBatch(props) {
       <Button
         variant="contained"
         color="primary"
-        style={{ width: "30%", borderRadius: "10px" }}
+        style={{ width: "30%", borderRadius: "30px" }}
         onClick={() =>
           insertItemBatch(
             warehouseId,
