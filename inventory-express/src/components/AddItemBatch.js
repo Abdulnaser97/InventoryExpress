@@ -52,12 +52,13 @@ export default function AddItemBatch(props) {
           color: "#5c5c5c",
           fontWeight: "bold",
           marginBottom: "10px",
+          height: "14%",
         }}
       >
         Add Item Batch
       </Typography>
       <TextField
-        style={{ margin: "8px", width: "90%" }}
+        style={{ margin: "8px", width: "90%", height: "14%" }}
         size="small"
         type="text"
         label="item name"
@@ -67,7 +68,7 @@ export default function AddItemBatch(props) {
       />
 
       <TextField
-        style={{ margin: "8px", width: "90%" }}
+        style={{ margin: "8px", width: "90%", height: "14%" }}
         size="small"
         type="text"
         label="Batch quantity"
@@ -77,10 +78,14 @@ export default function AddItemBatch(props) {
       />
 
       <FormControl
-        style={{ width: "90%", marginBottom: "15px", marginTop: "8px" }}
+        style={{
+          width: "90%",
+          marginBottom: "15px",
+          marginTop: "8px",
+        }}
         size="small"
       >
-        <InputLabel>Warehouse</InputLabel>
+        <InputLabel style={{ height: "12%" }}>Warehouse</InputLabel>
         <Select
           value={warehouseId}
           label="Warehouse"
@@ -100,7 +105,7 @@ export default function AddItemBatch(props) {
       <Button
         variant="contained"
         color="primary"
-        style={{ width: "30%", borderRadius: "30px" }}
+        style={{ width: "30%", borderRadius: "30px", height: "16%" }}
         onClick={() =>
           insertItemBatch(
             warehouseId,

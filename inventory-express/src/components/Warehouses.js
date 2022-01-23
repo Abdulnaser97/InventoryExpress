@@ -48,6 +48,7 @@ export default function Warehouses(props) {
           fontWeight: "bold",
           marginBottom: "15px",
           borderRadius: "10px",
+          height: "10%",
         }}
       >
         Warehouses
@@ -57,21 +58,26 @@ export default function Warehouses(props) {
         label="warehouse Address"
         variant="outlined"
         size="small"
-        style={{ width: "90%", marginBottom: "15px" }}
+        style={{ width: "90%", marginBottom: "15px", height: "12%" }}
         onChange={handleAddressChange}
         value={address}
       />
       <Button
         variant="contained"
         color="primary"
-        style={{ minWidth: "30%", marginBottom: "15px", borderRadius: "30px" }}
+        style={{
+          minWidth: "30%",
+          marginBottom: "15px",
+          borderRadius: "30px",
+          height: "12%",
+        }}
         onClick={() =>
           addWarehouse(address, props.setWarehouses, props.setNotification)
         }
       >
         + Warehouse
       </Button>
-      <div className="flex-list" style={{ height: "50%" }}>
+      <div className="flex-list" style={{ minHeight: "20%", maxHeight: "30%" }}>
         <List>
           {props.warehouses &&
             Object.entries(props.warehouses).map((wh) => {

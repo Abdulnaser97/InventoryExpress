@@ -117,7 +117,6 @@ export default function Items(props) {
                   edge="end"
                   aria-label="delete"
                   onClick={() => handleItemDelete(id)}
-                  style={{ zIndex: 9 }}
                 >
                   <DeleteIcon />
                 </IconButton>
