@@ -1,11 +1,13 @@
-# InventoryExpress
+# Inventory Express
 
-A lightweight inventory management tool
+### A lightweight inventory management tool
+# [Demo](https://main.d3bjqfdm8plgib.amplifyapp.com/)
+
 
 ![Logo](https://inventory-express.s3.us-east-2.amazonaws.com/Screen+Shot+2022-01-22+at+5.56.34+PM.png)
 
 
-### Demo: [here](https://main.d3bjqfdm8plgib.amplifyapp.com/)
+
 
 
 ## Some Context
@@ -15,14 +17,14 @@ The logic of the app operates over 3 categories of data
 ![DataTypes](https://inventory-express.s3.us-east-2.amazonaws.com/Screen+Shot+2022-01-22+at+6.40.11+PM.png)
 
 
-| `Warehouse`|    `Item`                |    `ItemBatch`                |
+| `ItemBatch`|    `Warehouse`              |      `Item`                 |
 | :-------- | :------------------------- | :------------------------- |
-| Contains a key:value table of `itemId`:`quanity` that represents the current inventory at the warehouse | Contains a set of `warehouseId`s at which the item exists | An event describing a new shipment of `ItemId` with `batchQuantity` to `warehouseId` |
+| An event describing a new shipment of `ItemId` with `batchQuantity` to `warehouseId` | Contains a key:value table of `itemId`:`quanity` that represents the current inventory at the warehouse  |  Contains a set of `warehouseId`s at which the item exists |
 
-The App consists of 3 viewer windows:
-1. Global Inventory: Contains the global quantity of an item at all warehouses. 
-2. Warehouses With Item In Stock: Shows all the warehouses that contain the selected item in stock
-3. Item Batches: Shows all inbound shipments to warehouses for the selected item. 
+The App consists of 3 viewer windows (screenshot above):
+1. Global Inventory: Displays the global quantity of an item at all warehouses. 
+2. Warehouses With Item In Stock: Lists all the warehouses that contain the selected item in stock
+3. Item Batches: Lists all inbound shipments to warehouses for the selected item. 
    If no item is selected, this window shows the shipments log for all items
 
 
