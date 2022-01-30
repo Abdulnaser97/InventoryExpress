@@ -1,9 +1,6 @@
 # Inventory Express
 
 ### A lightweight inventory management tool
-# [Demo](https://main.d3bjqfdm8plgib.amplifyapp.com/)
-
-Some CSS properties are missing when the app is built and deployed (demo above). For full styling, install locally using the instructions below.
 
 ![Logo](https://inventory-express.s3.us-east-2.amazonaws.com/Screen+Shot+2022-01-22+at+5.56.34+PM.png)
 
