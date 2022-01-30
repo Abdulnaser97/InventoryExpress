@@ -47,8 +47,7 @@ The App consists of 3 viewer windows (screenshot above):
 
 ## Usage
 
-* Demo: [here](https://main.d3bjqfdm8plgib.amplifyapp.com/)
-* Or locally by cloning the repo and running `cd inventory-express && npm i && npm start`
+Run `cd inventory-express && npm i && npm start`
 
 
 
