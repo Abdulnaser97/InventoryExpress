@@ -1,1 +1,1 @@
-{"nodes":[],"edges":[],"viewport":{"x":2,"y":0,"zoom":1}}
+{"nodes":[{"id":"randomnode_1649262554932","data":{"label":"sth","name":"","type":"Text","requestEdit":false,"width":345,"fontSize":"22.129299183501974px","height":63,"floatTargetHandle":false},"type":"Text","height":63,"width":345,"position":{"x":195,"y":240},"animated":true,"selected":true,"positionAbsolute":{"x":195,"y":240},"z":1000,"style":{"zIndex":"7"},"handleBounds":{"source":null,"target":null},"dragging":false}],"edges":[],"viewport":{"x":2,"y":0,"zoom":1}}
